@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
-        android:background="#fff"
+        android:background="#008593"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -21,7 +21,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#0000"
-                android:src="@mipmap/ic_menu_black_24dp" />
+                android:src="@mipmap/ic_menu_white_24dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="OVERVIEW"
-                android:textColor="#000"
+                android:textColor="#fff"
                 android:textSize="20sp" />
 
         </LinearLayout>
@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#0000"
-                android:src="@mipmap/ic_sync_black_24dp" />
+                android:src="@mipmap/ic_sync_white_24dp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -182,7 +182,7 @@
                             <com.github.mikephil.charting.charts.PieChart
                                 android:id="@+id/chartMonthExpense"
                                 android:layout_width="300dip"
-                                android:layout_height="300dip"></com.github.mikephil.charting.charts.PieChart>
+                                android:layout_height="300dip"/>
 
                         </LinearLayout>
                     </LinearLayout>
@@ -220,7 +220,7 @@
                             <com.github.mikephil.charting.charts.PieChart
                                 android:id="@+id/chartMonthCashFlow"
                                 android:layout_width="300dip"
-                                android:layout_height="300dip"></com.github.mikephil.charting.charts.PieChart>
+                                android:layout_height="300dip"/>
 
                         </LinearLayout>
                     </LinearLayout>

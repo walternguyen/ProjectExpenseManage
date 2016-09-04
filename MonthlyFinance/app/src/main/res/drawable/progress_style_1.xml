@@ -10,7 +10,7 @@
 
     <item android:id="@android:id/progress">
         <scale
-        android:drawable="@drawable/progress_primary_light_green"
+        android:drawable="@drawable/progress_light_green"
         android:scaleWidth="98%" />
     </item>
 
