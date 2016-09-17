@@ -26,4 +26,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'com.github.PhilJay:MPAndroidChart:v2.1.6'
+    compile 'com.github.kulik:radial-list-view:0.2'
 }

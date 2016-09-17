@@ -1,8 +1,14 @@
 package com.huy.monthlyfinance.Fragments;
 
+import android.app.Activity;
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,8 +27,10 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.huy.monthlyfinance.Listener.NavigationListener;
 import com.huy.monthlyfinance.MyView.BasicAdapter;
 import com.huy.monthlyfinance.MyView.Item.ExpensesItem;
+import com.huy.monthlyfinance.MyView.Item.RadialItem;
 import com.huy.monthlyfinance.R;
 import com.huy.monthlyfinance.SupportUtils.SupportUtils;
+import com.kulik.radial.RadialListView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +41,8 @@ import java.util.Random;
  */
 public class ExpenseManagerFragment extends BaseFragment implements View.OnClickListener {
     private NavigationListener mNavListener;
+    private FrameLayout mLayoutInput;
+
     @Override
     protected int getLayoutXML() {
         return R.layout.fragment_expense_management;
@@ -40,8 +50,15 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
 
     @Override
     protected void initUI(View view) {
-        ImageButton buttonBack = (ImageButton) view.findViewById(R.id.buttonBack);
-        buttonBack.setOnClickListener(this);
+        (view.findViewById(R.id.buttonBack)).setOnClickListener(this);
+        (view.findViewById(R.id.buttonLogo)).setOnClickListener(this);
+
+        final Activity activity = getActivity();
+        Resources resources = activity.getResources();
+        RadialListView mListExpense = (RadialListView) view.findViewById(R.id.listExpenses);
+        mLayoutInput = (FrameLayout) view.findViewById(R.id.layoutInput);
+        mLayoutInput.setOnClickListener(this);
+
         ArrayList<BarEntry> listBarEntries = new ArrayList<>();
         listBarEntries.add(new BarEntry(6f, 0));
         listBarEntries.add(new BarEntry(5f, 1));
@@ -103,8 +120,10 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
 
         float[] mMonthExpenseAmount = {10.5f, 20f, 10f, 5.5f, 14f, 5f, 10f, 10f, 15f};
         ArrayList<String> mMonthExpense = new ArrayList<>();
-        String[] expenses = {"Living services", "Health", "Entertainment",
-                "Food", "Dress", "Transport", "House expenses", "Family", "Etc"};
+        String[] expenses = {resources.getString(R.string.bill), resources.getString(R.string.health),
+                resources.getString(R.string.entertainment), resources.getString(R.string.food),
+                resources.getString(R.string.dress), resources.getString(R.string.transport),
+                resources.getString(R.string.home), resources.getString(R.string.family), resources.getString(R.string.etc)};
         Collections.addAll(mMonthExpense, expenses);
         PieChart pieChart = (PieChart) view.findViewById(R.id.chartExpensesDetail);
         int[] colors = {Color.parseColor("#3f51b5"), Color.parseColor("#c51162"), Color.parseColor("#8cc152"),
@@ -131,7 +150,49 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
                 getActivity().getLayoutInflater());
         listView.setAdapter(adapter);
         SupportUtils.setListViewHeight(listView);
+
+        ArrayList<RadialItem> items = new ArrayList<>();
+        RadialItem.OnClickListener listener = new RadialItem.OnClickListener() {
+
+            @Override
+            public void onClick(String data) {
+                Toast.makeText(activity, data + ". Hold to add " + data + " expense", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClick(String data) {
+                Toast.makeText(activity, "Add " + data + " expense", Toast.LENGTH_SHORT).show();
+            }
+        };
+        items.add(new RadialItem(listener, expenses[0], BitmapFactory.decodeResource(resources, R.drawable.receipt)));
+        items.add(new RadialItem(listener, expenses[1], BitmapFactory.decodeResource(resources, R.drawable.stethoscope)));
+        items.add(new RadialItem(listener, expenses[2], BitmapFactory.decodeResource(resources, R.drawable.game_controller)));
+        items.add(new RadialItem(listener, expenses[3], BitmapFactory.decodeResource(resources, R.drawable.turkey)));
+        items.add(new RadialItem(listener, expenses[4], BitmapFactory.decodeResource(resources, R.drawable.shirt)));
+        items.add(new RadialItem(listener, expenses[5], BitmapFactory.decodeResource(resources, R.drawable.car)));
+        items.add(new RadialItem(listener, expenses[6], BitmapFactory.decodeResource(resources, R.drawable.home)));
+        items.add(new RadialItem(listener, expenses[7], BitmapFactory.decodeResource(resources, R.drawable.family)));
+        BasicAdapter<RadialItem> mListRadialAdapter =
+                new BasicAdapter<>(items, R.layout.item_radial, getActivity().getLayoutInflater());
+        mListExpense.setAdapter(mListRadialAdapter);
+        mListExpense.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            }
+        });
+        mListExpense.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
     }
+
     private void writeFakeData(ArrayList<ExpensesItem> listExpenses, String[] expenses,
                                int[] drawables, int[] images, int[] progressDrawables) {
         if (drawables.length != images.length || drawables.length != expenses.length) {
@@ -145,6 +206,7 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
                     images[i], drawables[i], progressDrawables[i]));
         }
     }
+
     private void addDataToChart(final ArrayList<String> xValues, final float[] yValuesData, PieChart chart,
                                 final String textOnNothingSelected, String chartTitle, int[] colors) {
         chart.setUsePercentValues(true);
@@ -204,6 +266,12 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
         switch (view.getId()) {
             case R.id.buttonBack:
                 mNavListener.navBack();
+                break;
+            case R.id.buttonLogo:
+                mLayoutInput.setVisibility(View.VISIBLE);
+                break;
+            case R.id.layoutInput:
+                mLayoutInput.setVisibility(View.GONE);
                 break;
             default:
                 break;

@@ -55,142 +55,191 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="10">
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dip"
+                android:layout_weight="3"
+                android:background="#5f7c89"
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/layoutChart"
                     android:layout_width="match_parent"
-                    android:layout_height="0dip"
-                    android:layout_weight="3"
-                    android:background="#5f7c89"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="25dip"
+                    android:orientation="vertical"
+                    android:padding="5dip">
 
-                    <LinearLayout
-                        android:id="@+id/layoutChart"
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/chartExpenses"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginBottom="25dip"
-                        android:orientation="vertical"
-                        android:padding="5dip">
-
-                        <com.github.mikephil.charting.charts.BarChart
-                            android:id="@+id/chartExpenses"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="#0000" />
-                    </LinearLayout>
-
+                        android:background="#0000" />
                 </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1"
+                android:gravity="bottom"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dip"
+                    android:layout_marginRight="15dip"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="right"
+                    android:text="Expenses summary for this month"
+                    android:textColor="#555"
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dip"
-                    android:layout_weight="1"
-                    android:gravity="bottom"
-                    android:orientation="vertical">
+                    android:layout_height="5dip"
+                    android:background="@drawable/border_bottom_gray" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dip"
-                        android:layout_marginRight="15dip"
-                        android:fontFamily="sans-serif-condensed"
-                        android:gravity="right"
-                        android:text="Expenses summary for this month"
-                        android:textColor="#555"
-                        android:textSize="12sp" />
+            </LinearLayout>
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:layout_weight="5"
+                android:background="#fff">
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="5dip"
-                        android:background="@drawable/border_bottom_gray" />
-
-                </LinearLayout>
-
-                <android.support.v4.widget.SwipeRefreshLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dip"
-                    android:layout_weight="5"
-                    android:background="#fff">
-
-                    <ScrollView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical">
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="25dip">
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center">
-
-                                <com.github.mikephil.charting.charts.PieChart
-                                    android:id="@+id/chartExpensesDetail"
-                                    android:layout_width="200dip"
-                                    android:layout_height="200dip"
-                                    android:layout_marginTop="10dip" />
-                            </LinearLayout>
-
-                            <ListView
-                                android:id="@+id/listExpensesDetail"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="10dip"
-                                android:divider="@null"/>
-
+                            <com.github.mikephil.charting.charts.PieChart
+                                android:id="@+id/chartExpensesDetail"
+                                android:layout_width="250dip"
+                                android:layout_height="250dip" />
                         </LinearLayout>
-                    </ScrollView>
 
-                </android.support.v4.widget.SwipeRefreshLayout>
+                        <ListView
+                            android:id="@+id/listExpensesDetail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dip"
+                            android:layout_marginRight="10dip"
+                            android:divider="@null" />
+
+                    </LinearLayout>
+                </ScrollView>
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:layout_weight="2" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:layout_weight="2"
+                android:gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/buttonLogo"
+                    android:layout_width="50dip"
+                    android:layout_height="50dip"
+                    android:layout_marginLeft="20dip"
+                    android:background="@drawable/circle_light_green"
+                    android:src="@mipmap/ic_cash_24dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:layout_weight="5" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/layoutInput"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#c8ffffff"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom|left">
+                <ImageView
+                    android:layout_width="250dip"
+                    android:layout_height="250dip"
+                    android:src="@drawable/radial_bg_1"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dip"
-                    android:layout_weight="2" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dip"
-                    android:layout_weight="2"
-                    android:gravity="center_vertical">
-
-                    <ImageButton
-                        android:layout_width="50dip"
-                        android:layout_height="50dip"
-                        android:layout_marginLeft="20dip"
-                        android:background="@drawable/circle_light_green"
-                        android:src="@mipmap/ic_cash_24dp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dip"
-                    android:layout_weight="5" />
-
+                android:gravity="bottom|left">
+                <ImageView
+                    android:layout_width="245dip"
+                    android:layout_height="245dip"
+                    android:src="@drawable/radial_bg"/>
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutRadialMenu"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="bottom">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.kulik.radial.RadialListView xmlns:radial="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/listExpenses"
+                        android:layout_width="245dip"
+                        android:layout_height="245dip"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        radial:delay_per_item_anim="1000"
+                        radial:delemiter_width="2dp"
+                        radial:horisontal_gravity="left" />
+                </LinearLayout>
+            </LinearLayout>
+
         </FrameLayout>
 
-    </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>
