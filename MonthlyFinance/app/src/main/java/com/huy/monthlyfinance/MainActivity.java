@@ -3,6 +3,7 @@ package com.huy.monthlyfinance;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.huy.monthlyfinance.Database.DatabaseHelper;
 import com.huy.monthlyfinance.Fragments.BaseFragment;
 import com.huy.monthlyfinance.Fragments.ExpenseManagerFragment;
 import com.huy.monthlyfinance.Fragments.OverViewFragment;
@@ -24,6 +26,7 @@ import com.huy.monthlyfinance.Listener.NavigationListener;
 import com.huy.monthlyfinance.MyView.BasicAdapter;
 import com.huy.monthlyfinance.MyView.Item.ListItem.SideMenuItem;
 import com.huy.monthlyfinance.MyView.RoundImageView;
+import com.huy.monthlyfinance.ProcessData.ProcessDataMining;
 import com.huy.monthlyfinance.SupportUtils.SupportUtils;
 
 import java.io.File;
@@ -31,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 public class MainActivity extends Activity implements View.OnClickListener, MainListener, NavigationListener {
@@ -42,11 +46,27 @@ public class MainActivity extends Activity implements View.OnClickListener, Main
     private BasicAdapter<SideMenuItem> mSideMenuAdapter;
     private LinearLayout mLayoutTopSideMenu;
     private RoundImageView mImageAvatar;
-
+    // xu ly test thuat toan
+    DatabaseHelper db;
+    ProcessDataMining p;
+    SQLiteDatabase sl;
+    List tets;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //test thuat toan huy
+       db=new DatabaseHelper(this);
+        //db.onUpgrade(sl,9,10);
+        //db.open();
+       // p=new ProcessDataMining();
+        //tets=new ArrayList<>();
+        //tets=p.getDataProduct();
+//        System.out.println("danh sach san pham");
+//        for(int i=0;i<tets.size();i++) {
+//            System.out.println("phan tu thu:"+tets.get(i).toString());
+//        }
+        // end
         mDrawer = (DrawerLayout) findViewById(R.id.mainLayout);
         mLayoutSideMenu = (LinearLayout) findViewById(R.id.layoutSideMenu);
         mLayoutTopSideMenu = (LinearLayout) findViewById(R.id.layoutTopSideMenu);
