@@ -8,7 +8,7 @@ import java.util.List;
  * Created by huy nguyen on 9/16/2016.
  */
 
-public class LichSuChiTieu  {
+public class ExpensesHistory extends BaseDTO{
 
     private String maLichsuMuahang;
 
@@ -22,11 +22,11 @@ public class LichSuChiTieu  {
 
     private double giatri;
 
-    public LichSuChiTieu() {
+    public ExpensesHistory() {
         super();
     }
 
-    public LichSuChiTieu(String maLichsuMuahang, String maChitietSanpham, String maChitietTaikhoan, String maNguoidung, String ngaymua, double giatri) {
+    public ExpensesHistory(String maLichsuMuahang, String maChitietSanpham, String maChitietTaikhoan, String maNguoidung, String ngaymua, double giatri) {
         super();
         this.maLichsuMuahang = maLichsuMuahang;
         this.maChitietSanpham = maChitietSanpham;

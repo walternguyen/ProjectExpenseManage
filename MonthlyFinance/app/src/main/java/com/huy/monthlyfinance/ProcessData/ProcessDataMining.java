@@ -3,8 +3,7 @@ package com.huy.monthlyfinance.ProcessData;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.huy.monthlyfinance.DAO.SanPhamDao;
-import com.huy.monthlyfinance.Model.SanPham;
+import com.huy.monthlyfinance.Database.DAO.ProductDAO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
  */
 public class ProcessDataMining {
     SQLiteDatabase db;
-    SanPhamDao sanPhamDao;
+    ProductDAO productDAO;
     // ham lay du lieu can mining
     public List getDatamining(){
         List<ObjectDataMining> objectDataMiningList=new ArrayList<>();

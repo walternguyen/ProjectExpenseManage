@@ -71,7 +71,7 @@ public class OverViewFragment extends BaseFragment implements View.OnClickListen
         addDataToChart(new ArrayList<>(Arrays.asList(mMonthExpense)), mMonthExpenseAmount, mMonthlyExpenseChart,
                 "This month expense chart", "Monthly Expenses");
         addDataToChart(new ArrayList<>(Arrays.asList(mMonthCashFlow)), mMonthCashFlowAmount, mMonthlyCashFlowChart
-                , "This month cash flow chart", "Month Cash Flow");
+                , "This month cash flow chart", ""/*"Month Cash Flow"*/);
         mAnimationRotateForward30 = new RotateAnimation(0.0f, 30.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
                 0.5f);
         mAnimationRotateForward30.setDuration(1000);
@@ -84,8 +84,6 @@ public class OverViewFragment extends BaseFragment implements View.OnClickListen
         mAnimationRotateBackward30.setRepeatCount(0);
         mAnimationRotateBackward30.setRepeatMode(Animation.REVERSE);
         mAnimationRotateBackward30.setFillAfter(true);
-
-
 
         final ImageButton mButtonAddReminder = (ImageButton) view.findViewById(R.id.buttonAddReminder);
         final ImageButton mButtonAddTransfer = (ImageButton) view.findViewById(R.id.buttonAddTransfer);

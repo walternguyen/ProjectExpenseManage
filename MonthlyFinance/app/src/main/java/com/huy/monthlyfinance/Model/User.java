@@ -5,7 +5,7 @@ package com.huy.monthlyfinance.Model;
  * Created by huy nguyen on 9/16/2016.
  */
 
-public class NguoiDung  {
+public class User extends BaseDTO{
 
     private String maNguoidung;
 
@@ -15,11 +15,11 @@ public class NguoiDung  {
 
     private String email;
 
-    public NguoiDung() {
+    public User() {
         super();
     }
 
-    public NguoiDung(String maNguoidung, String tenDangnhap, String matkhau, String email) {
+    public User(String maNguoidung, String tenDangnhap, String matkhau, String email) {
         super();
         this.maNguoidung = maNguoidung;
         this.tenDangnhap = tenDangnhap;

@@ -56,7 +56,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Main
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //test thuat toan huy
-       db=new DatabaseHelper(this);
+       //db=new DatabaseHelper(this);
         //db.onUpgrade(sl,9,10);
         //db.open();
        // p=new ProcessDataMining();
@@ -83,10 +83,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Main
 
         ListView mSideMenu = (ListView) findViewById(R.id.sideMenu);
         mMenuItems = new ArrayList<>();
-        mMenuItems.add(new SideMenuItem(R.mipmap.ic_cash_24dp, "Cash", ""));
-        mMenuItems.add(new SideMenuItem(R.mipmap.ic_expense_24dp, "Expenses", ""));
-        mMenuItems.add(new SideMenuItem(R.mipmap.ic_report_24dp, "Recommendations", ""));
-        mMenuItems.add(new SideMenuItem(R.mipmap.ic_chart_24dp, "Statistic", ""));
+        mMenuItems.add(new SideMenuItem(R.mipmap.ic_cash_24dp, getString(R.string.budget), ""));
+        mMenuItems.add(new SideMenuItem(R.mipmap.ic_expense_24dp, getString(R.string.expenses), ""));
+        mMenuItems.add(new SideMenuItem(R.mipmap.ic_report_24dp, getString(R.string.recommendation), ""));
+        mMenuItems.add(new SideMenuItem(R.mipmap.ic_chart_24dp, getString(R.string.statistic), ""));
         mSideMenuAdapter = new BasicAdapter<>(mMenuItems, R.layout.item_side_menu, getLayoutInflater());
         mSideMenu.setAdapter(mSideMenuAdapter);
         mSideMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -96,12 +96,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Main
                     mMenuItems.get(pos).setFocused(pos == i);
                 }
                 mSideMenuAdapter.notifyDataSetChanged();
-                switch (mMenuItems.get(i).getTextName()) {
-                    case "Expenses":
-                        showFragment(ExpenseManagerFragment.class, null);
-                        break;
-                    default:
-                        break;
+                if (mMenuItems.get(i).getTextName().equals(getString(R.string.expenses))) {
+                    showFragment(ExpenseManagerFragment.class, null);
                 }
                 mDrawer.closeDrawer(mLayoutSideMenu);
             }

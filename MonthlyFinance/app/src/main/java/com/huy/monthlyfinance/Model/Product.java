@@ -6,7 +6,7 @@ import java.util.List;
  * Created by huy nguyen on 9/16/2016.
  */
 
-public class SanPham  {
+public class Product extends BaseDTO{
 
     private String maSanpham;
 
@@ -17,11 +17,11 @@ public class SanPham  {
 
     private String hinhanh;
 
-    public SanPham() {
+    public Product() {
         super();
     }
 
-    public SanPham(String maSanpham, String tenSanpham, String maNhomSanpham, String donvitinh, String hinhanh) {
+    public Product(String maSanpham, String tenSanpham, String maNhomSanpham, String donvitinh, String hinhanh) {
         super();
         this.maSanpham = maSanpham;
         this.tenSanpham = tenSanpham;

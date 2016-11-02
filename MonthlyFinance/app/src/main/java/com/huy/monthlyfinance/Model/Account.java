@@ -5,7 +5,7 @@ package com.huy.monthlyfinance.Model;
  * Created by huy nguyen on 9/16/2016.
  */
 
-public class TaiKhoan  {
+public class Account extends BaseDTO{
 
     private String maTaikhoan;
 
@@ -23,10 +23,10 @@ public class TaiKhoan  {
 
     private boolean trangthai;
 
-    public TaiKhoan() {
+    public Account() {
         super();
     }
-    public TaiKhoan(String maTaikhoan, String tenTaikhoan, String loaiTaikhoan, String loaiTiente, double tongtien, String ghichu, String maNguoidung, boolean trangthai) {
+    public Account(String maTaikhoan, String tenTaikhoan, String loaiTaikhoan, String loaiTiente, double tongtien, String ghichu, String maNguoidung, boolean trangthai) {
         super();
         this.maTaikhoan = maTaikhoan;
         this.tenTaikhoan = tenTaikhoan;

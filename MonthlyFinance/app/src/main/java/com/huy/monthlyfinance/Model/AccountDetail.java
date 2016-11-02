@@ -7,7 +7,7 @@ import java.util.List;
  * Created by huy nguyen on 9/16/2016.
  */
 
-public class ChiTiettaiKhoan {
+public class AccountDetail extends BaseDTO {
 
     private String maChitietTaikhoan;
 
@@ -19,10 +19,10 @@ public class ChiTiettaiKhoan {
 
     private String ngayGiaodich;
 
-    public ChiTiettaiKhoan() {
+    public AccountDetail() {
     }
 
-    public ChiTiettaiKhoan(String maChitietTaikhoan, String maTaikhoan, double sodudau, double soduhientai, String ngayGiaodich) {
+    public AccountDetail(String maChitietTaikhoan, String maTaikhoan, double sodudau, double soduhientai, String ngayGiaodich) {
         this.maChitietTaikhoan = maChitietTaikhoan;
         this.maTaikhoan = maTaikhoan;
         this.sodudau = sodudau;

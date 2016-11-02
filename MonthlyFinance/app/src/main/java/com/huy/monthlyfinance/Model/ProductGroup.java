@@ -5,16 +5,16 @@ import java.util.List;
 /**
  * Created by huy nguyen on 9/16/2016.
  */
-public class NhomSanPham {
+public class ProductGroup extends BaseDTO{
     private String maNhomSanpham;
     private String tenNhomSanpham;
     private String hinhanh;
 
-    public NhomSanPham() {
+    public ProductGroup() {
 
     }
 
-    public NhomSanPham(String maNhomSanpham, String tenNhomSanpham, String hinhanh) {
+    public ProductGroup(String maNhomSanpham, String tenNhomSanpham, String hinhanh) {
 
         this.maNhomSanpham = maNhomSanpham;
         this.tenNhomSanpham = tenNhomSanpham;
