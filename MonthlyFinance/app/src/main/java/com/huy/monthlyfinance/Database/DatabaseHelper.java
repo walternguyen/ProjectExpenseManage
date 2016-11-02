@@ -17,6 +17,7 @@ import java.util.List;
 public abstract class DatabaseHelper<T extends BaseDTO> extends SQLiteOpenHelper {
     protected static SQLiteDatabase mReadableDatabase;
     protected static SQLiteDatabase mWritableDatabase;
+    protected static boolean mIsCreatedDatabase;
     protected ContentValues mValues;
     protected String mMessage;
     // database version
@@ -114,20 +115,24 @@ public abstract class DatabaseHelper<T extends BaseDTO> extends SQLiteOpenHelper
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        mIsCreatedDatabase = false;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        try {
-            db.execSQL(CREATE_TABLE_PRODUCT_GROUP);
-            db.execSQL(CREATE_TABLE_PRODUCT);
-            db.execSQL(CREATE_TABLE_PRODUCT_DETAIL);
-            db.execSQL(CREATE_TABLE_USER);
-            db.execSQL(CREATE_TABLE_ACCOUNT);
-            db.execSQL(CREATE_TABLE_ACCOUNT_DETAIL);
-            db.execSQL(CREATE_TABLE_EXPENSE_HISTORY);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (!mIsCreatedDatabase) {
+            try {
+                db.execSQL(CREATE_TABLE_PRODUCT_GROUP);
+                db.execSQL(CREATE_TABLE_PRODUCT);
+                db.execSQL(CREATE_TABLE_PRODUCT_DETAIL);
+                db.execSQL(CREATE_TABLE_USER);
+                db.execSQL(CREATE_TABLE_ACCOUNT);
+                db.execSQL(CREATE_TABLE_ACCOUNT_DETAIL);
+                db.execSQL(CREATE_TABLE_EXPENSE_HISTORY);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            mIsCreatedDatabase = true;
         }
 
         if (mReadableDatabase == null) {
