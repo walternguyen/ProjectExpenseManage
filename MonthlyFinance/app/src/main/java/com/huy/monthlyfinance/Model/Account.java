@@ -6,101 +6,91 @@ package com.huy.monthlyfinance.Model;
  */
 
 public class Account extends BaseDTO{
-
-    private String maTaikhoan;
-
-    private String tenTaikhoan;
-
-    private String loaiTaikhoan;
-
-    private String loaiTiente;
-
-    private double tongtien;
-
-    private String ghichu;
-
-    private String maNguoidung;
-
-    private boolean trangthai;
+    private String mAccountID;
+    private String mAccountName;
+    private String mAccountType;
+    private String mCurrency;
+    private double mCurrentBalance;
+    private String mNote;
+    private String mUserID;
+    private boolean mActiveStatus;
 
     public Account() {
         super();
     }
-    public Account(String maTaikhoan, String tenTaikhoan, String loaiTaikhoan, String loaiTiente, double tongtien, String ghichu, String maNguoidung, boolean trangthai) {
+    public Account(String AccountID, String AccountName, String AccountType, String Currency, double CurrentBalance, String Note, String UserId, boolean ActiveStatus) {
         super();
-        this.maTaikhoan = maTaikhoan;
-        this.tenTaikhoan = tenTaikhoan;
-        this.loaiTaikhoan = loaiTaikhoan;
-        this.loaiTiente = loaiTiente;
-        this.tongtien = tongtien;
-        this.ghichu = ghichu;
-        this.maNguoidung = maNguoidung;
-        this.trangthai = trangthai;
+        this.mAccountID = AccountID;
+        this.mAccountName = AccountName;
+        this.mAccountType = AccountType;
+        this.mCurrency = Currency;
+        this.mCurrentBalance = CurrentBalance;
+        this.mNote = Note;
+        this.mUserID = UserId;
+        this.mActiveStatus = ActiveStatus;
 
     }
-    public String getMaTaikhoan() {
-        return maTaikhoan;
+    public String getAccountID() {
+        return mAccountID;
     }
 
-    public void setMaTaikhoan(String maTaikhoan) {
-        this.maTaikhoan = maTaikhoan;
+    public void setAccountID(String mAccountID) {
+        this.mAccountID = mAccountID;
     }
 
-    public String getTenTaikhoan() {
-        return tenTaikhoan;
+    public String getAccountName() {
+        return mAccountName;
     }
 
-    public void setTenTaikhoan(String tenTaikhoan) {
-        this.tenTaikhoan = tenTaikhoan;
+    public void setAccountName(String mAccountName) {
+        this.mAccountName = mAccountName;
     }
 
-    public String getLoaiTaikhoan() {
-        return loaiTaikhoan;
+    public String getAccountType() {
+        return mAccountType;
     }
 
-    public void setLoaiTaikhoan(String loaiTaikhoan) {
-        this.loaiTaikhoan = loaiTaikhoan;
+    public void setAccountType(String mAccountType) {
+        this.mAccountType = mAccountType;
     }
 
-    public String getLoaiTiente() {
-        return loaiTiente;
+    public String getCurrency() {
+        return mCurrency;
     }
 
-    public void setLoaiTiente(String loaiTiente) {
-        this.loaiTiente = loaiTiente;
+    public void setCurrency(String mCurrency) {
+        this.mCurrency = mCurrency;
     }
 
-    public double getTongtien() {
-        return tongtien;
+    public double getCurrentBalance() {
+        return mCurrentBalance;
     }
 
-    public void setTongtien(double tongtien) {
-        this.tongtien = tongtien;
+    public void setCurrentBalance(double mCurrentBalance) {
+        this.mCurrentBalance = mCurrentBalance;
     }
 
-    public String getGhichu() {
-        return ghichu;
+    public String getNote() {
+        return mNote;
     }
 
-    public void setGhichu(String ghichu) {
-        this.ghichu = ghichu;
+    public void setNote(String mNote) {
+        this.mNote = mNote;
     }
 
-    public String getMaNguoidung() {
-        return maNguoidung;
+    public String getUserID() {
+        return mUserID;
     }
 
-    public void setMaNguoidung(String maNguoidung) {
-        this.maNguoidung = maNguoidung;
+    public void setUserID(String mUserID) {
+        this.mUserID = mUserID;
     }
 
-    public boolean isTrangthai() {
-        return trangthai;
+    public boolean isActiveStatus() {
+        return mActiveStatus;
     }
 
-    public void setTrangthai(boolean trangthai) {
-        this.trangthai = trangthai;
+    public void setActiveStatus(boolean mActiveStatus) {
+        this.mActiveStatus = mActiveStatus;
     }
-
-
 }

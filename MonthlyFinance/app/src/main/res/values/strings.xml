@@ -80,4 +80,13 @@
     <string name="statistic">Statistic</string>
     <string name="recommendation">Recommendation</string>
 
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="remember">Remember me</string>
+
+    <string name="cash">Cash</string>
+    <string name="credit_card">Credit card</string>
+    <string name="bank">Bank</string>
+
 </resources>

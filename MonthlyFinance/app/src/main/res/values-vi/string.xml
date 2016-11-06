@@ -9,7 +9,7 @@
     <string name="transport">Giao thông, vận chuyển</string>
     <string name="etc">Khác</string>
     <string name="dress">May mặc</string>
-    <string name="family">Chi phí gia đình</string>
+    <string name="family">Chi phí mProductCost đình</string>
 
     <string name="expense_fragment">Chi phí của bạn</string>
     <string name="expense_fragment_description">Các chi phí trong tháng</string>
@@ -79,5 +79,14 @@
     <string name="expenses">Chi Tiêu</string>
     <string name="statistic">Thống Kê</string>
     <string name="recommendation">Khuyến Nghị</string>
+
+    <string name="username">Tên đăng nhập</string>
+    <string name="password">Mật khẩu</string>
+    <string name="login">Đăng nhập</string>
+    <string name="remember">Ghi nhớ đăng nhập</string>
+
+    <string name="cash">Tiền mặt</string>
+    <string name="credit_card">Tài khoản tín dụng</string>
+    <string name="bank">Tài khoản tiết kiệm</string>
 
 </resources>

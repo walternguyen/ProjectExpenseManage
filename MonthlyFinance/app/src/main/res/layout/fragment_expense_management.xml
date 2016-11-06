@@ -372,7 +372,6 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1">
 
-
                                 <ImageButton
                                     android:id="@+id/buttonNextGroup"
                                     android:layout_width="match_parent"
@@ -568,10 +567,10 @@
                                 <TextView
                                     android:layout_width="30dip"
                                     android:layout_height="30dip"
+                                    android:layout_marginRight="5dip"
                                     android:text="▲"
                                     android:textColor="#fff"
-                                    android:textSize="30sp"
-                                    android:layout_marginRight="5dip"/>
+                                    android:textSize="30sp" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -945,7 +944,7 @@
                                 <CalendarView
                                     android:id="@+id/datePicker"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="250dip"
                                     android:layout_marginTop="10dip" />
 
                                 <LinearLayout

@@ -1,73 +1,66 @@
 package com.huy.monthlyfinance.Model;
 
 
-import java.util.List;
-
 /**
  * Created by huy nguyen on 9/16/2016.
  */
 
 public class AccountDetail extends BaseDTO {
-
-    private String maChitietTaikhoan;
-
-    private String maTaikhoan;
-
-    private double sodudau;
-
-    private double soduhientai;
-
-    private String ngayGiaodich;
+    private String mAccountDetailID;
+    private String mAccountID;
+    private double mInitialBalance;
+    private double mCurrentBalance;
+    private String mTransactionDate;
 
     public AccountDetail() {
     }
 
-    public AccountDetail(String maChitietTaikhoan, String maTaikhoan, double sodudau, double soduhientai, String ngayGiaodich) {
-        this.maChitietTaikhoan = maChitietTaikhoan;
-        this.maTaikhoan = maTaikhoan;
-        this.sodudau = sodudau;
-        this.soduhientai = soduhientai;
-        this.ngayGiaodich = ngayGiaodich;
+    public AccountDetail(String AccountDetailID, String AccountID, double InitialBalance, double CurrentBalance, String TransactionDate) {
+        this.mAccountDetailID = AccountDetailID;
+        this.mAccountID = AccountID;
+        this.mInitialBalance = InitialBalance;
+        this.mCurrentBalance = CurrentBalance;
+        this.mTransactionDate = TransactionDate;
     }
 
-    public String getMaChitietTaikhoan() {
-        return maChitietTaikhoan;
+    public String getAccountDetailID() {
+        return mAccountDetailID;
     }
 
-    public void setMaChitietTaikhoan(String maChitietTaikhoan) {
-        this.maChitietTaikhoan = maChitietTaikhoan;
+    public void setAccountDetailID(String mAccountDetailID) {
+        this.mAccountDetailID = mAccountDetailID;
     }
 
-    public String getMaTaikhoan() {
-        return maTaikhoan;
+    public String getAccountID() {
+        return mAccountID;
     }
 
-    public void setMaTaikhoan(String maTaikhoan) {
-        this.maTaikhoan = maTaikhoan;
+    public void setAccountID(String mAccountID) {
+        this.mAccountID = mAccountID;
     }
 
-    public double getSodudau() {
-        return sodudau;
+    public double getInitialBalance() {
+        return mInitialBalance;
     }
 
-    public void setSodudau(double sodudau) {
-        this.sodudau = sodudau;
+    public void setInitialBalance(double mInitialBalance) {
+        this.mInitialBalance = mInitialBalance;
     }
 
-    public double getSoduhientai() {
-        return soduhientai;
+    public double getCurrentBalance() {
+        return mCurrentBalance;
     }
 
-    public void setSoduhientai(double soduhientai) {
-        this.soduhientai = soduhientai;
+    public void setCurrentBalance(double mCurrentBalance) {
+        this.mCurrentBalance = mCurrentBalance;
     }
 
-    public String getNgayGiaodich() {
-        return ngayGiaodich;
+    public String getTransactionDate() {
+        return mTransactionDate;
     }
 
-    public void setNgayGiaodich(String ngayGiaodich) {
-        this.ngayGiaodich = ngayGiaodich;
+    public void setTransactionDate(String mTransactionDate) {
+        this.mTransactionDate = mTransactionDate;
     }
 
 }

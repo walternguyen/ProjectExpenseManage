@@ -1,6 +1,5 @@
 package com.huy.monthlyfinance.Database.DAO;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -13,17 +12,26 @@ import java.util.List;
 /**
  * Created by huy nguyen on 9/18/2016.
  */
-public class ProductGroupDAO extends DatabaseHelper<ProductGroup> {
+public class ProductGroupDAO extends BaseDAO {
+    private static ProductGroupDAO mInstance;
+
     //constructor
-    public ProductGroupDAO(Context context) {
+    private ProductGroupDAO(Context context) {
         super(context);
+    }
+
+    public static ProductGroupDAO getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new ProductGroupDAO(context);
+        }
+        return mInstance;
     }
 
     // ham them moi mot nhom san pham
     public boolean insertProductGroup(ProductGroup productGroup) {
-        mValues.put(productGroupName, productGroup.getTenNhomSanpham());
-        mValues.put(productImage, productGroup.getHinhanh());
-        boolean result = mWritableDatabase.insert(tblProductGroup, null, mValues) > 0;
+        mValues.put(DatabaseHelper.productGroupName, productGroup.getGroupName());
+        mValues.put(DatabaseHelper.productImage, productGroup.getGroupImage());
+        boolean result = mWritableDatabase.insert(DatabaseHelper.tblProductGroup, null, mValues) > 0;
         if (result) {
             mMessage = "insert successful";
         } else {
@@ -35,16 +43,18 @@ public class ProductGroupDAO extends DatabaseHelper<ProductGroup> {
 
     // ham cap nhat nhom san pham
     public int updateProductGroup(ProductGroup n) {
-        mValues.put(productGroupName, n.getTenNhomSanpham());
-        mValues.put(productImage, n.getHinhanh());
-        int result = mReadableDatabase.update(tblProductGroup, mValues, productGroupID + "=?", new String[]{String.valueOf(n.getMaNhomSanpham())});
+        mValues.put(DatabaseHelper.productGroupName, n.getGroupName());
+        mValues.put(DatabaseHelper.productImage, n.getGroupImage());
+        int result = mReadableDatabase.update(DatabaseHelper.tblProductGroup, mValues, DatabaseHelper.productGroupID + "=?",
+                new String[]{String.valueOf(n.getProductGroupID())});
         mValues.clear();
         return result;
     }
 
     // ham xoa mot nhom san pham
     public void delete(ProductGroup n) {
-        mReadableDatabase.delete(tblProductGroup, productGroupID + "=?", new String[]{String.valueOf(n.getMaNhomSanpham())});
+        mReadableDatabase.delete(DatabaseHelper.tblProductGroup, DatabaseHelper.productGroupID + "=?",
+                new String[]{String.valueOf(n.getProductGroupID())});
         mValues.clear();
     }
 
@@ -52,14 +62,14 @@ public class ProductGroupDAO extends DatabaseHelper<ProductGroup> {
     public List<ProductGroup> getAllProductGroup() {
         List<ProductGroup> productGroupList = new ArrayList<>();
         // Select All Query
-        String selectQuery = " SELECT  * FROM " + tblProductGroup;
+        String selectQuery = " SELECT  * FROM " + DatabaseHelper.tblProductGroup;
         Cursor cursor = mReadableDatabase.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
                 ProductGroup productGroup = new ProductGroup();
-                productGroup.setMaNhomSanpham(cursor.getString(0));
-                productGroup.setTenNhomSanpham(cursor.getString(1));
-                productGroup.setHinhanh(cursor.getString(2));
+                productGroup.setProductGroupID(cursor.getString(0));
+                productGroup.setGroupName(cursor.getString(1));
+                productGroup.setGroupImage(cursor.getString(2));
                 // Adding contact to list
                 productGroupList.add(productGroup);
             } while (cursor.moveToNext());

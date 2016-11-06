@@ -1,73 +1,66 @@
 package com.huy.monthlyfinance.Model;
 
-import java.util.List;
-
 /**
  * Created by huy nguyen on 9/16/2016.
  */
 
 public class Product extends BaseDTO{
-
-    private String maSanpham;
-
-    private String tenSanpham;
-
-    private String maNhomSanpham;
-    private String donvitinh;
-
-    private String hinhanh;
+    private String mProductID;
+    private String mProductName;
+    private String mProductGroupID;
+    private String mUnitCalculation;
+    private String mProductImage;
 
     public Product() {
         super();
     }
 
-    public Product(String maSanpham, String tenSanpham, String maNhomSanpham, String donvitinh, String hinhanh) {
+    public Product(String ProductID, String ProductName, String ProductGroupID, String UnitCalculation, String ProductImage) {
         super();
-        this.maSanpham = maSanpham;
-        this.tenSanpham = tenSanpham;
-        this.maNhomSanpham = maNhomSanpham;
-        this.donvitinh = donvitinh;
-        this.hinhanh = hinhanh;
+        this.mProductID = ProductID;
+        this.mProductName = ProductName;
+        this.mProductGroupID = ProductGroupID;
+        this.mUnitCalculation = UnitCalculation;
+        this.mProductImage = ProductImage;
     }
 
-    public String getMaSanpham() {
-        return maSanpham;
+    public String getProductID() {
+        return mProductID;
     }
 
-    public void setMaSanpham(String maSanpham) {
-        this.maSanpham = maSanpham;
+    public void setProductID(String mProductID) {
+        this.mProductID = mProductID;
     }
 
-    public String getTenSanpham() {
-        return tenSanpham;
+    public String getProductName() {
+        return mProductName;
     }
 
-    public void setTenSanpham(String tenSanpham) {
-        this.tenSanpham = tenSanpham;
+    public void setProductName(String mProductName) {
+        this.mProductName = mProductName;
     }
 
-    public String getMaNhomSanpham() {
-        return maNhomSanpham;
+    public String getProductGroupID() {
+        return mProductGroupID;
     }
 
-    public void setMaNhomSanpham(String maNhomSanpham) {
-        this.maNhomSanpham = maNhomSanpham;
+    public void setProductGroupID(String mProductGroupID) {
+        this.mProductGroupID = mProductGroupID;
     }
 
-    public String getDonvitinh() {
-        return donvitinh;
+    public String getUnitCalculation() {
+        return mUnitCalculation;
     }
 
-    public void setDonvitinh(String donvitinh) {
-        this.donvitinh = donvitinh;
+    public void setUnitCalculation(String mUnitCalculation) {
+        this.mUnitCalculation = mUnitCalculation;
     }
 
-    public String getHinhanh() {
-        return hinhanh;
+    public String getProductImage() {
+        return mProductImage;
     }
 
-    public void setHinhanh(String hinhanh) {
-        this.hinhanh = hinhanh;
+    public void setProductImage(String mProductImage) {
+        this.mProductImage = mProductImage;
     }
-
 }

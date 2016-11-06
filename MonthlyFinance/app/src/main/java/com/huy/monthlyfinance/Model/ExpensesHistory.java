@@ -1,87 +1,78 @@
 package com.huy.monthlyfinance.Model;
 
 
-
-import java.util.List;
-
 /**
  * Created by huy nguyen on 9/16/2016.
  */
 
 public class ExpensesHistory extends BaseDTO{
-
-    private String maLichsuMuahang;
-
-    private String maChitietSanpham;
-
-    private String maChitietTaikhoan;
-
-    private String maNguoidung;
-
-    private String ngaymua;
-
-    private double giatri;
+    private String mTransactionID;
+    private String mProductDetailID;
+    private String mAccountID;
+    private String mUserID;
+    private String mTransactionDate;
+    private double mTransactionCost;
 
     public ExpensesHistory() {
         super();
     }
 
-    public ExpensesHistory(String maLichsuMuahang, String maChitietSanpham, String maChitietTaikhoan, String maNguoidung, String ngaymua, double giatri) {
+    public ExpensesHistory(String TransactionID, String ProductDetailID, String AccountID, String UserID, String TransactionDate, double TransactionCost) {
         super();
-        this.maLichsuMuahang = maLichsuMuahang;
-        this.maChitietSanpham = maChitietSanpham;
-        this.maChitietTaikhoan = maChitietTaikhoan;
-        this.maNguoidung = maNguoidung;
-        this.ngaymua = ngaymua;
-        this.giatri = giatri;
+        this.mTransactionID = TransactionID;
+        this.mProductDetailID = ProductDetailID;
+        this.mAccountID = AccountID;
+        this.mUserID = UserID;
+        this.mTransactionDate = TransactionDate;
+        this.mTransactionCost = TransactionCost;
     }
 
-    public String getMaLichsuMuahang() {
-        return maLichsuMuahang;
+    public String getTransactionID() {
+        return mTransactionID;
     }
 
-    public void setMaLichsuMuahang(String maLichsuMuahang) {
-        this.maLichsuMuahang = maLichsuMuahang;
+    public void setTransactionID(String mTransactionID) {
+        this.mTransactionID = mTransactionID;
     }
 
-    public String getMaChitietSanpham() {
-        return maChitietSanpham;
+    public String getProductDetailID() {
+        return mProductDetailID;
     }
 
-    public void setMaChitietSanpham(String maChitietSanpham) {
-        this.maChitietSanpham = maChitietSanpham;
+    public void setProductDetailID(String mProductDetailID) {
+        this.mProductDetailID = mProductDetailID;
     }
 
-    public String getMaChitietTaikhoan() {
-        return maChitietTaikhoan;
+    public String getAccountID() {
+        return mAccountID;
     }
 
-    public void setMaChitietTaikhoan(String maChitietTaikhoan) {
-        this.maChitietTaikhoan = maChitietTaikhoan;
+    public void setAccountID(String mAccountID) {
+        this.mAccountID = mAccountID;
     }
 
-    public String getMaNguoidung() {
-        return maNguoidung;
+    public String getUserID() {
+        return mUserID;
     }
 
-    public void setMaNguoidung(String maNguoidung) {
-        this.maNguoidung = maNguoidung;
+    public void setUserID(String mUserID) {
+        this.mUserID = mUserID;
     }
 
-    public String getNgaymua() {
-        return ngaymua;
+    public String getTransactionDate() {
+        return mTransactionDate;
     }
 
-    public void setNgaymua(String ngaymua) {
-        this.ngaymua = ngaymua;
+    public void setTransactionDate(String mTransactionDate) {
+        this.mTransactionDate = mTransactionDate;
     }
 
-    public double getGiatri() {
-        return giatri;
+    public double getTransactionCost() {
+        return mTransactionCost;
     }
 
-    public void setGiatri(double giatri) {
-        this.giatri = giatri;
+    public void setTransactionCost(double mTransactionCost) {
+        this.mTransactionCost = mTransactionCost;
     }
 
 }

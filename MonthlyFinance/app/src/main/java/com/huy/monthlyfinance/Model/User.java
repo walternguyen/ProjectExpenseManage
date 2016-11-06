@@ -6,56 +6,52 @@ package com.huy.monthlyfinance.Model;
  */
 
 public class User extends BaseDTO{
-
-    private String maNguoidung;
-
-    private String tenDangnhap;
-
-    private String matkhau;
-
-    private String email;
+    private String mUserID;
+    private String mUserName;
+    private String mPassword;
+    private String mEmail;
 
     public User() {
         super();
     }
 
-    public User(String maNguoidung, String tenDangnhap, String matkhau, String email) {
+    public User(String UserID, String UserName, String Password, String Email) {
         super();
-        this.maNguoidung = maNguoidung;
-        this.tenDangnhap = tenDangnhap;
-        this.matkhau = matkhau;
-        this.email = email;
+        this.mUserID = UserID;
+        this.mUserName = UserName;
+        this.mPassword = Password;
+        this.mEmail = Email;
     }
 
-    public String getMaNguoidung() {
-        return maNguoidung;
+    public String getUserID() {
+        return mUserID;
     }
 
-    public void setMaNguoidung(String maNguoidung) {
-        this.maNguoidung = maNguoidung;
+    public void setUserID(String mUserID) {
+        this.mUserID = mUserID;
     }
 
-    public String getTenDangnhap() {
-        return tenDangnhap;
+    public String getUserName() {
+        return mUserName;
     }
 
-    public void setTenDangnhap(String tenDangnhap) {
-        this.tenDangnhap = tenDangnhap;
+    public void setUserName(String mUserName) {
+        this.mUserName = mUserName;
     }
 
-    public String getMatkhau() {
-        return matkhau;
+    public String getPassword() {
+        return mPassword;
     }
 
-    public void setMatkhau(String matkhau) {
-        this.matkhau = matkhau;
+    public void setPassword(String mPassword) {
+        this.mPassword = mPassword;
     }
 
     public String getEmail() {
-        return email;
+        return mEmail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail(String mEmail) {
+        this.mEmail = mEmail;
     }
 }

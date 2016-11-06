@@ -14,62 +14,57 @@ import java.util.List;
 /**
  * Created by huy nguyen on 9/15/2016.
  */
-public abstract class DatabaseHelper<T extends BaseDTO> extends SQLiteOpenHelper {
-    protected static SQLiteDatabase mReadableDatabase;
-    protected static SQLiteDatabase mWritableDatabase;
-    protected static boolean mIsCreatedDatabase;
-    protected ContentValues mValues;
-    protected String mMessage;
+public class DatabaseHelper extends SQLiteOpenHelper {
     // database version
     private static final int DATABASE_VERSION = 9;
     //ten co so du lieu
     private static final String DATABASE_NAME = "QuanLyTaiChinh.db";
 
     // tables
-    protected static final String tblProduct = "Product";
-    protected static final String tblProductGroup = "ProductGroup";
-    private static final String tblProductDetail = "ChiTietSanPham";
-    private static final String tblAccount = "TaiKhoan";
-    private static final String tblAccountDetail = "ChiTietTaiKhoan";
-    private static final String tblUser = "NguoiDung";
-    private static final String tblExpensesHistory = "LichSuChiTieu";
+    public static final String tblProduct = "Product";
+    public static final String tblProductGroup = "ProductGroup";
+    public static final String tblProductDetail = "ChiTietSanPham";
+    public static final String tblAccount = "TaiKhoan";
+    public static final String tblAccountDetail = "ChiTietTaiKhoan";
+    public static final String tblUser = "NguoiDung";
+    public static final String tblExpensesHistory = "LichSuChiTieu";
 
     // Product table
-    protected static final String productID = "MaSanPham";
-    protected static final String productName = "TenSanPham";
-    protected static final String productGroupID = "MaNhomSanPham";
-    protected static final String productCalculationUnit = "DonViTinh";
-    protected static final String productImage = "HinhAnh";
-    protected static final String productGroupName = "TenNhomSanPham";
+    public static final String productID = "MaSanPham";
+    public static final String productName = "TenSanPham";
+    public static final String productGroupID = "MaNhomSanPham";
+    public static final String productCalculationUnit = "DonViTinh";
+    public static final String productImage = "HinhAnh";
+    public static final String productGroupName = "TenNhomSanPham";
 
     //Product Detail table
-    private static final String productDetailID = "MaChiTietSanPham";
-    private static final String productCost = "Gia";
-    private static final String productQuantity = "SoLuong";
+    public static final String productDetailID = "MaChiTietSanPham";
+    public static final String productCost = "Gia";
+    public static final String productQuantity = "SoLuong";
 
     //Account table
-    private static final String accountID = "MaTaiKhoan";
-    private static final String userID = "MaNguoiDung";
-    private static final String accountName = "Tentaikhoan";
-    private static final String accountType = "Loaitaikhoan";
-    private static final String accountConcurrency = "LoaiTienTe";
-    private static final String accountCurrentCash = "TongTien";
-    private static final String accountNote = "GhiChu";
-    private static final String accountState = "TrangThai";
-    private static final String accountDetailID = "MaChiTietTaiKhoan";
-    private static final String accountInitBalance = "SoDuDau";
-    private static final String accountCurrentBalance = "SoDuHienTai";
-    private static final String accountTransactionDate = "NgayGiaoDich";
+    public static final String accountID = "MaTaiKhoan";
+    public static final String userID = "MaNguoiDung";
+    public static final String accountName = "Tentaikhoan";
+    public static final String accountType = "Loaitaikhoan";
+    public static final String accountConcurrency = "LoaiTienTe";
+    public static final String accountCurrentCash = "TongTien";
+    public static final String accountNote = "GhiChu";
+    public static final String accountState = "TrangThai";
+    public static final String accountDetailID = "MaChiTietTaiKhoan";
+    public static final String accountInitBalance = "SoDuDau";
+    public static final String accountCurrentBalance = "SoDuHienTai";
+    public static final String accountTransactionDate = "NgayGiaoDich";
 
     //User table
-    private static final String userLoginName = "TenDangNhap";
-    private static final String userPassword = "MatKhau";
-    private static final String userEmail = "Email";
+    public static final String userLoginName = "TenDangNhap";
+    public static final String userPassword = "MatKhau";
+    public static final String userEmail = "Email";
 
     //Expense History table
-    private static final String expenseHistoryID = "MaLichSuChiTieu";
-    private static final String expenseDate = "NgayMua";
-    private static final String expenseTotalCost = "GiaTri";
+    public static final String expenseHistoryID = "MaLichSuChiTieu";
+    public static final String expenseDate = "NgayMua";
+    public static final String expenseTotalCost = "GiaTri";
 
     // Create table commands
     private static final String CREATE_TABLE_PRODUCT =
@@ -115,31 +110,20 @@ public abstract class DatabaseHelper<T extends BaseDTO> extends SQLiteOpenHelper
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        mIsCreatedDatabase = false;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        if (!mIsCreatedDatabase) {
-            try {
-                db.execSQL(CREATE_TABLE_PRODUCT_GROUP);
-                db.execSQL(CREATE_TABLE_PRODUCT);
-                db.execSQL(CREATE_TABLE_PRODUCT_DETAIL);
-                db.execSQL(CREATE_TABLE_USER);
-                db.execSQL(CREATE_TABLE_ACCOUNT);
-                db.execSQL(CREATE_TABLE_ACCOUNT_DETAIL);
-                db.execSQL(CREATE_TABLE_EXPENSE_HISTORY);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            mIsCreatedDatabase = true;
-        }
-
-        if (mReadableDatabase == null) {
-            mReadableDatabase = this.getReadableDatabase();
-        }
-        if (mWritableDatabase == null) {
-            mWritableDatabase = this.getWritableDatabase();
+        try {
+            db.execSQL(CREATE_TABLE_PRODUCT_GROUP);
+            db.execSQL(CREATE_TABLE_PRODUCT);
+            db.execSQL(CREATE_TABLE_PRODUCT_DETAIL);
+            db.execSQL(CREATE_TABLE_USER);
+            db.execSQL(CREATE_TABLE_ACCOUNT);
+            db.execSQL(CREATE_TABLE_ACCOUNT_DETAIL);
+            db.execSQL(CREATE_TABLE_EXPENSE_HISTORY);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

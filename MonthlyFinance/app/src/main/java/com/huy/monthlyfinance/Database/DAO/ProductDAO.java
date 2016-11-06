@@ -1,9 +1,7 @@
 package com.huy.monthlyfinance.Database.DAO;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.huy.monthlyfinance.Database.DatabaseHelper;
 import com.huy.monthlyfinance.Model.Product;
@@ -14,19 +12,26 @@ import java.util.List;
 /**
  * Created by huy nguyen on 9/18/2016.
  */
-public class ProductDAO extends DatabaseHelper<Product> {
-
-    public ProductDAO(Context context) {
+public class ProductDAO extends BaseDAO {
+    private static ProductDAO mInstance;
+    private ProductDAO(Context context) {
         super(context);
+    }
+
+    public static ProductDAO getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new ProductDAO(context);
+        }
+        return mInstance;
     }
 
     // ham them san pham
     public void doInsertTblProduct(Product product) {
-        mValues.put(productName, product.getTenSanpham());
-        mValues.put(productGroupID, product.getMaNhomSanpham());
-        mValues.put(productCalculationUnit, product.getDonvitinh());
-        mValues.put(productImage, product.getHinhanh());
-        if (mWritableDatabase.insert(tblProduct, null, mValues) > 0) {
+        mValues.put(DatabaseHelper.productName, product.getProductName());
+        mValues.put(DatabaseHelper.productGroupID, product.getProductGroupID());
+        mValues.put(DatabaseHelper.productCalculationUnit, product.getUnitCalculation());
+        mValues.put(DatabaseHelper.productImage, product.getProductImage());
+        if (mWritableDatabase.insert(DatabaseHelper.tblProduct, null, mValues) > 0) {
             mMessage = "insert successful";
         } else {
             mMessage = "Fail to insert in san pham";
@@ -36,18 +41,19 @@ public class ProductDAO extends DatabaseHelper<Product> {
 
     //ham cap nhat san pham
     public int doUpdateTblProduct(Product product) {
-        mValues.put(productName, product.getTenSanpham());
-        mValues.put(productGroupID, product.getMaNhomSanpham());
-        mValues.put(productCalculationUnit, product.getDonvitinh());
-        mValues.put(productImage, product.getHinhanh());
-        int result = mWritableDatabase.update(tblProduct, mValues, productID + "=?", new String[]{String.valueOf(product.getMaSanpham())});
+        mValues.put(DatabaseHelper.productName, product.getProductName());
+        mValues.put(DatabaseHelper.productGroupID, product.getProductGroupID());
+        mValues.put(DatabaseHelper.productCalculationUnit, product.getUnitCalculation());
+        mValues.put(DatabaseHelper.productImage, product.getProductImage());
+        int result = mWritableDatabase.update(DatabaseHelper.tblProduct, mValues, DatabaseHelper.productID + "=?",
+                new String[]{String.valueOf(product.getProductID())});
         mValues.clear();
         return result;
     }
 
     // ham xoa san pham
     public void doDeleteTblProduct(Product s) {
-        mWritableDatabase.delete(tblProduct, productID + "=?", new String[]{String.valueOf(s.getMaSanpham())});
+        mWritableDatabase.delete(DatabaseHelper.tblProduct, DatabaseHelper.productID + "=?", new String[]{String.valueOf(s.getProductID())});
         mValues.clear();
     }
 
@@ -55,13 +61,13 @@ public class ProductDAO extends DatabaseHelper<Product> {
     public List<Product> getAllProduct() {
         List<Product> productList = new ArrayList<>();
         // Select All Query
-        String selectQuery = " SELECT  * FROM " + tblProduct;
+        String selectQuery = " SELECT  * FROM " + DatabaseHelper.tblProduct;
         Cursor cursor = mReadableDatabase.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
                 Product s = new Product();
-                s.setMaSanpham(cursor.getString(0));
-                s.setTenSanpham(cursor.getString(1));
+                s.setProductID(cursor.getString(0));
+                s.setProductName(cursor.getString(1));
                 // Adding contact to list
                 productList.add(s);
             } while (cursor.moveToNext());

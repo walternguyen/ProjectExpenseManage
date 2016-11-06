@@ -1,65 +1,50 @@
 package com.huy.monthlyfinance.Model;
 
 
-
-import java.util.List;
-
 /**
  * Created by huy nguyen on 9/16/2016.
  */
 
 public class ProductDetail extends BaseDTO {
 
-    private String maChitietSanpham;
+    private String mProductDetailID;
 
-    private String maSanpham;
+    private String mProductID;
 
-    private double gia;
-
-    private int soluong;
+    private double mProductCost;
 
     public ProductDetail( ) {
         super();
     }
 
-    public ProductDetail(String maChitietSanpham, String maSanpham, double gia, int soluong) {
+    public ProductDetail(String ProductDetailID, String ProductID, double ProductCost) {
         super();
-        this.maChitietSanpham = maChitietSanpham;
-        this.maSanpham = maSanpham;
-        this.gia = gia;
-        this.soluong = soluong;
+        this.mProductDetailID = ProductDetailID;
+        this.mProductID = ProductID;
+        this.mProductCost = ProductCost;
     }
 
-    public String getMaChitietSanpham() {
-        return maChitietSanpham;
+    public String getProductDetailID() {
+        return mProductDetailID;
     }
 
-    public void setMaChitietSanpham(String maChitietSanpham) {
-        this.maChitietSanpham = maChitietSanpham;
+    public void setProductDetailID(String mProductDetailID) {
+        this.mProductDetailID = mProductDetailID;
     }
 
-    public String getMaSanpham() {
-        return maSanpham;
+    public String getProductID() {
+        return mProductID;
     }
 
-    public void setMaSanpham(String maSanpham) {
-        this.maSanpham = maSanpham;
+    public void setProductID(String mProductID) {
+        this.mProductID = mProductID;
     }
 
-    public double getGia() {
-        return gia;
+    public double getProductCost() {
+        return mProductCost;
     }
 
-    public void setGia(double gia) {
-        this.gia = gia;
+    public void setProductCost(double mProductCost) {
+        this.mProductCost = mProductCost;
     }
-
-    public int getSoluong() {
-        return soluong;
-    }
-
-    public void setSoluong(int soluong) {
-        this.soluong = soluong;
-    }
-
 }

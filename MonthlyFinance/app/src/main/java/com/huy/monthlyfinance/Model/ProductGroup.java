@@ -1,47 +1,45 @@
 package com.huy.monthlyfinance.Model;
 
-import java.util.List;
-
 /**
  * Created by huy nguyen on 9/16/2016.
  */
 public class ProductGroup extends BaseDTO{
-    private String maNhomSanpham;
-    private String tenNhomSanpham;
-    private String hinhanh;
+    private String mProductGroupID;
+    private String mGroupName;
+    private String mGroupImage;
 
     public ProductGroup() {
 
     }
 
-    public ProductGroup(String maNhomSanpham, String tenNhomSanpham, String hinhanh) {
+    public ProductGroup(String ProductGroupID, String GroupName, String GroupImage) {
 
-        this.maNhomSanpham = maNhomSanpham;
-        this.tenNhomSanpham = tenNhomSanpham;
-        this.hinhanh = hinhanh;
+        this.mProductGroupID = ProductGroupID;
+        this.mGroupName = GroupName;
+        this.mGroupImage = GroupImage;
     }
 
-    public String getMaNhomSanpham() {
-        return maNhomSanpham;
+    public String getProductGroupID() {
+        return mProductGroupID;
     }
 
-    public void setMaNhomSanpham(String maNhomSanpham) {
-        this.maNhomSanpham = maNhomSanpham;
+    public void setProductGroupID(String mProductGroupID) {
+        this.mProductGroupID = mProductGroupID;
     }
 
-    public String getTenNhomSanpham() {
-        return tenNhomSanpham;
+    public String getGroupName() {
+        return mGroupName;
     }
 
-    public void setTenNhomSanpham(String tenNhomSanpham) {
-        this.tenNhomSanpham = tenNhomSanpham;
+    public void setGroupName(String mGroupName) {
+        this.mGroupName = mGroupName;
     }
 
-    public String getHinhanh() {
-        return hinhanh;
+    public String getGroupImage() {
+        return mGroupImage;
     }
 
-    public void setHinhanh(String hinhanh) {
-        this.hinhanh = hinhanh;
+    public void setGroupImage(String mGroupImage) {
+        this.mGroupImage = mGroupImage;
     }
 }

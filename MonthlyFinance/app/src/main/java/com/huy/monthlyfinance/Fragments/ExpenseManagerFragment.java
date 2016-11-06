@@ -807,7 +807,7 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
                 if (num_price > 0 && !name.isEmpty()) {
                     BoughtProduct product = new BoughtProduct(bitmap, name, unit, num_price, false);
                     boolean existed = false;
-                    if (mTotalCost + num_price> mCurrentCash) {
+                    if (mTotalCost + num_price > mCurrentCash) {
                         message = "Current total exceeds your cash limit";
                     } else {
                         for (int i = 0; i < mListProducts.size() && !existed; i++) {

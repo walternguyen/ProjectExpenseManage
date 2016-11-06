@@ -148,15 +148,15 @@ public class OverViewFragment extends BaseFragment implements View.OnClickListen
         mListAccountItems.setAdapter(adapter);
         mAccountItems.add(new AccountItem(
                 R.drawable.circle_dark_blue, R.mipmap.ic_wallet_filled_money_tool_24dp, 100, 40, Color.parseColor("#88c03f"),
-                "Cash", "$3000.05", "Initial Balance: $700", "Spent/ Budget: $50.00/ $700.00", false, true
+                resources.getString(R.string.cash), "$3000.05", "Initial Balance: $700", "Spent/ Budget: $50.00/ $700.00", false, true
         ));
         mAccountItems.add(new AccountItem(
                 R.drawable.circle_orange, R.mipmap.ic_bank, 200, 30, Color.parseColor("#88c03f"),
-                "Bank", "$1980.05", "Initial Balance: $2000", "Spent/ Budget: $50.00/ $700.00", false, true
+                resources.getString(R.string.bank), "$1980.05", "Initial Balance: $2000", "Spent/ Budget: $50.00/ $700.00", false, true
         ));
         mAccountItems.add(new AccountItem(
                 R.drawable.circle_dark_red, R.mipmap.ic_credit_cards_24dp, 100, 70, Color.parseColor("#f74848"),
-                "Credit Card", "-$10.00", "Initial Balance: $100", "Spent/ Budget: $50.00/ $700.00", false, false
+                resources.getString(R.string.credit_card), "-$10.00", "Initial Balance: $100", "Spent/ Budget: $50.00/ $700.00", false, false
         ));
         /*mAccountItems.add(new AccountItem(
                 R.drawable.circle_light_green_1, R.mipmap.ic_more_horiz_white_24dp, 100, 70, Color.parseColor("#88c03f"),
