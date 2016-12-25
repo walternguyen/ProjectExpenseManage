@@ -6,7 +6,8 @@ package com.huy.monthlyfinance.Model;
 
 public class Product extends BaseDTO{
     private String mProductID;
-    private String mProductName;
+    private String mProductNameEN;
+    private String mProductNameVI;
     private String mProductGroupID;
     private String mUnitCalculation;
     private String mProductImage;
@@ -15,10 +16,20 @@ public class Product extends BaseDTO{
         super();
     }
 
-    public Product(String ProductID, String ProductName, String ProductGroupID, String UnitCalculation, String ProductImage) {
+    public Product(String ProductID, String ProductNameEN, String ProductNameVI, String ProductGroupID, String UnitCalculation, String ProductImage) {
         super();
         this.mProductID = ProductID;
-        this.mProductName = ProductName;
+        this.mProductNameEN = ProductNameEN;
+        this.mProductNameVI = ProductNameVI;
+        this.mProductGroupID = ProductGroupID;
+        this.mUnitCalculation = UnitCalculation;
+        this.mProductImage = ProductImage;
+    }
+
+    public Product(String ProductNameEN, String ProductNameVI, String ProductGroupID, String UnitCalculation, String ProductImage) {
+        super();
+        this.mProductNameEN = ProductNameEN;
+        this.mProductNameVI = ProductNameVI;
         this.mProductGroupID = ProductGroupID;
         this.mUnitCalculation = UnitCalculation;
         this.mProductImage = ProductImage;
@@ -32,12 +43,12 @@ public class Product extends BaseDTO{
         this.mProductID = mProductID;
     }
 
-    public String getProductName() {
-        return mProductName;
+    public String getProductNameEN() {
+        return mProductNameEN;
     }
 
-    public void setProductName(String mProductName) {
-        this.mProductName = mProductName;
+    public void setProductNameEN(String mProductNameEN) {
+        this.mProductNameEN = mProductNameEN;
     }
 
     public String getProductGroupID() {
@@ -62,5 +73,13 @@ public class Product extends BaseDTO{
 
     public void setProductImage(String mProductImage) {
         this.mProductImage = mProductImage;
+    }
+
+    public String getProductNameVI() {
+        return mProductNameVI;
+    }
+
+    public void setProductNameVI(String mProductNameVI) {
+        this.mProductNameVI = mProductNameVI;
     }
 }

@@ -21,6 +21,7 @@
     <string name="amount_hint">Số lượng của sản phẩm này</string>
     <string name="calculation_unit">Đơn vị tính</string>
     <string name="calculation_unit_hint">Đơn vị</string>
+    <string name="account">Tài khoản</string>
     <string name="cost">Đơn giá</string>
     <string name="cost_hint">Đơn giá của sản phẩm này</string>
     <string name="date">Ngày mua</string>
@@ -88,5 +89,21 @@
     <string name="cash">Tiền mặt</string>
     <string name="credit_card">Tài khoản tín dụng</string>
     <string name="bank">Tài khoản tiết kiệm</string>
+    <string name="email">Email</string>
+    <string name="currency">Đơn vị tiền tệ</string>
+
+    <string name="init_info">Khởi tạo thông tin cá nhân</string>
+    <string name="init_balances">Khởi tạo các số dư</string>
+
+    <string name="budget_title">Tài khoản</string>
+    <string name="total_payable">TOTAL PAYABLE</string>
+
+    <string name="recommend">Khuyến nghị</string>
+
+    <string name="enter_name">Nhập tên mặt hàng</string>
+    <string name="bought_products">Sản phẩm đã mua</string>
+    <string name="recommend_products">Gợi ý cho bạn</string>
+
+    <string name="balance_title">Số dư</string>
 
 </resources>

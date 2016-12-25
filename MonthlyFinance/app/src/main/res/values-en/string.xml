@@ -21,6 +21,7 @@
     <string name="amount_hint">Amount of product</string>
     <string name="calculation_unit">Calculation unit</string>
     <string name="calculation_unit_hint">Unit</string>
+    <string name="account">Account</string>
     <string name="cost">Cost</string>
     <string name="cost_hint">Total for this product</string>
     <string name="date">Date</string>
@@ -84,9 +85,25 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="remember">Remember me</string>
+    <string name="email">Email</string>
 
     <string name="cash">Cash</string>
     <string name="credit_card">Credit card</string>
     <string name="bank">Bank</string>
+    <string name="currency">Currency</string>
+
+    <string name="init_info">Please init your info</string>
+    <string name="init_balances">Init your balances</string>
+
+    <string name="budget_title">Your budget</string>
+    <string name="total_payable">TOTAL PAYABLE</string>
+
+    <string name="recommend">Recommendation</string>
+
+    <string name="enter_name">Enter a name</string>
+    <string name="bought_products">Bought products</string>
+    <string name="recommend_products">Recommended for you</string>
+
+    <string name="balance_title">Total Balance</string>
 
 </resources>

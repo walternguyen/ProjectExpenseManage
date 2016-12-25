@@ -8,17 +8,15 @@ package com.huy.monthlyfinance.Model;
 public class AccountDetail extends BaseDTO {
     private String mAccountDetailID;
     private String mAccountID;
-    private double mInitialBalance;
     private double mCurrentBalance;
     private String mTransactionDate;
 
     public AccountDetail() {
     }
 
-    public AccountDetail(String AccountDetailID, String AccountID, double InitialBalance, double CurrentBalance, String TransactionDate) {
+    public AccountDetail(String AccountDetailID, String AccountID, double CurrentBalance, String TransactionDate) {
         this.mAccountDetailID = AccountDetailID;
         this.mAccountID = AccountID;
-        this.mInitialBalance = InitialBalance;
         this.mCurrentBalance = CurrentBalance;
         this.mTransactionDate = TransactionDate;
     }
@@ -37,14 +35,6 @@ public class AccountDetail extends BaseDTO {
 
     public void setAccountID(String mAccountID) {
         this.mAccountID = mAccountID;
-    }
-
-    public double getInitialBalance() {
-        return mInitialBalance;
-    }
-
-    public void setInitialBalance(double mInitialBalance) {
-        this.mInitialBalance = mInitialBalance;
     }
 
     public double getCurrentBalance() {

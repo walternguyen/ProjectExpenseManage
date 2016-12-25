@@ -5,17 +5,24 @@ package com.huy.monthlyfinance.Model;
  */
 public class ProductGroup extends BaseDTO{
     private String mProductGroupID;
-    private String mGroupName;
+    private String mGroupNameEN;
+    private String mGroupNameVI;
     private String mGroupImage;
 
     public ProductGroup() {
 
     }
 
-    public ProductGroup(String ProductGroupID, String GroupName, String GroupImage) {
-
+    public ProductGroup(String ProductGroupID, String GroupNameEN, String GroupNameVI, String GroupImage) {
         this.mProductGroupID = ProductGroupID;
-        this.mGroupName = GroupName;
+        this.mGroupNameEN = GroupNameEN;
+        this.mGroupNameVI = GroupNameVI;
+        this.mGroupImage = GroupImage;
+    }
+
+    public ProductGroup(String GroupNameEN, String GroupNameVI, String GroupImage) {
+        this.mGroupNameEN = GroupNameEN;
+        this.mGroupNameVI = GroupNameVI;
         this.mGroupImage = GroupImage;
     }
 
@@ -27,12 +34,12 @@ public class ProductGroup extends BaseDTO{
         this.mProductGroupID = mProductGroupID;
     }
 
-    public String getGroupName() {
-        return mGroupName;
+    public String getGroupNameEN() {
+        return mGroupNameEN;
     }
 
-    public void setGroupName(String mGroupName) {
-        this.mGroupName = mGroupName;
+    public void setGroupNameEN(String mGroupNameEN) {
+        this.mGroupNameEN = mGroupNameEN;
     }
 
     public String getGroupImage() {
@@ -41,5 +48,13 @@ public class ProductGroup extends BaseDTO{
 
     public void setGroupImage(String mGroupImage) {
         this.mGroupImage = mGroupImage;
+    }
+
+    public String getGroupNameVI() {
+        return mGroupNameVI;
+    }
+
+    public void setGroupNameVI(String mGroupNameVI) {
+        this.mGroupNameVI = mGroupNameVI;
     }
 }

@@ -6,7 +6,6 @@ package com.huy.monthlyfinance.Model;
  */
 
 public class User extends BaseDTO{
-    private String mUserID;
     private String mUserName;
     private String mPassword;
     private String mEmail;
@@ -15,20 +14,11 @@ public class User extends BaseDTO{
         super();
     }
 
-    public User(String UserID, String UserName, String Password, String Email) {
+    public User(String UserName, String Password, String Email) {
         super();
-        this.mUserID = UserID;
         this.mUserName = UserName;
         this.mPassword = Password;
         this.mEmail = Email;
-    }
-
-    public String getUserID() {
-        return mUserID;
-    }
-
-    public void setUserID(String mUserID) {
-        this.mUserID = mUserID;
     }
 
     public String getUserName() {

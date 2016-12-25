@@ -10,6 +10,7 @@ public class Account extends BaseDTO{
     private String mAccountName;
     private String mAccountType;
     private String mCurrency;
+    private double mInitialBalance;
     private double mCurrentBalance;
     private String mNote;
     private String mUserID;
@@ -18,12 +19,27 @@ public class Account extends BaseDTO{
     public Account() {
         super();
     }
-    public Account(String AccountID, String AccountName, String AccountType, String Currency, double CurrentBalance, String Note, String UserId, boolean ActiveStatus) {
+    public Account(String AccountID, String AccountName, String AccountType, String Currency, double InitialBalance, double CurrentBalance,
+                   String Note, String UserId, boolean ActiveStatus) {
         super();
         this.mAccountID = AccountID;
         this.mAccountName = AccountName;
         this.mAccountType = AccountType;
         this.mCurrency = Currency;
+        this.mInitialBalance = InitialBalance;
+        this.mCurrentBalance = CurrentBalance;
+        this.mNote = Note;
+        this.mUserID = UserId;
+        this.mActiveStatus = ActiveStatus;
+
+    }
+    public Account(String AccountName, String AccountType, String Currency, double InitialBalance, double CurrentBalance,
+                   String Note, String UserId, boolean ActiveStatus) {
+        super();
+        this.mAccountName = AccountName;
+        this.mAccountType = AccountType;
+        this.mCurrency = Currency;
+        this.mInitialBalance = InitialBalance;
         this.mCurrentBalance = CurrentBalance;
         this.mNote = Note;
         this.mUserID = UserId;
@@ -86,11 +102,19 @@ public class Account extends BaseDTO{
         this.mUserID = mUserID;
     }
 
-    public boolean isActiveStatus() {
+    public boolean isActive() {
         return mActiveStatus;
     }
 
     public void setActiveStatus(boolean mActiveStatus) {
         this.mActiveStatus = mActiveStatus;
+    }
+
+    public double getInitialBalance() {
+        return mInitialBalance;
+    }
+
+    public void setInitialBalance(double mInitialBalance) {
+        this.mInitialBalance = mInitialBalance;
     }
 }

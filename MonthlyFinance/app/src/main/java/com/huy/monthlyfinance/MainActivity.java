@@ -3,6 +3,7 @@ package com.huy.monthlyfinance;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -13,10 +14,13 @@ import android.widget.ListView;
 
 import com.huy.monthlyfinance.Database.DAO.ProductDAO;
 import com.huy.monthlyfinance.Fragments.BaseFragment;
+import com.huy.monthlyfinance.Fragments.BudgetFragment;
 import com.huy.monthlyfinance.Fragments.ExpenseManagerFragment;
 import com.huy.monthlyfinance.Fragments.OverViewFragment;
+import com.huy.monthlyfinance.Fragments.RecommendationFragment;
 import com.huy.monthlyfinance.Listener.MainListener;
 import com.huy.monthlyfinance.Listener.NavigationListener;
+import com.huy.monthlyfinance.Model.Product;
 import com.huy.monthlyfinance.MyView.BasicAdapter;
 import com.huy.monthlyfinance.MyView.Item.ListItem.SideMenuItem;
 import com.huy.monthlyfinance.MyView.RoundImageView;
@@ -34,6 +38,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Main
     private BasicAdapter<SideMenuItem> mSideMenuAdapter;
     private LinearLayout mLayoutTopSideMenu;
     private RoundImageView mImageAvatar;
+
     // xu ly test thuat toan
     private ProductDAO mProductSource;
 
@@ -49,14 +54,27 @@ public class MainActivity extends Activity implements View.OnClickListener, Main
         mLayoutTopSideMenu = (LinearLayout) findViewById(R.id.layoutTopSideMenu);
         mImageAvatar = (RoundImageView) findViewById(R.id.imageAvatar);
 
+        MainApplication mainApplication = MainApplication.getInstance();
         mFragments = new TreeMap<>();
         OverViewFragment overViewFragment = new OverViewFragment();
         overViewFragment.setListener(this);
         this.addFragment(overViewFragment);
+        mainApplication.registerDataListener(overViewFragment);
         ExpenseManagerFragment expenseManagerFragment = new ExpenseManagerFragment();
         expenseManagerFragment.setListener(this);
         expenseManagerFragment.setNavListener(this);
         this.addFragment(expenseManagerFragment);
+        mainApplication.registerDataListener(expenseManagerFragment);
+        BudgetFragment budgetFragment = new BudgetFragment();
+        budgetFragment.setListener(this);
+        budgetFragment.setNavListener(this);
+        this.addFragment(budgetFragment);
+        mainApplication.registerDataListener(budgetFragment);
+        RecommendationFragment recommendationFragment = new RecommendationFragment();
+        recommendationFragment.setListener(this);
+        recommendationFragment.setNavListener(this);
+        this.addFragment(recommendationFragment);
+        mainApplication.registerDataListener(recommendationFragment);
 
         ListView mSideMenu = (ListView) findViewById(R.id.sideMenu);
         mMenuItems = new ArrayList<>();
@@ -75,6 +93,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Main
                 mSideMenuAdapter.notifyDataSetChanged();
                 if (mMenuItems.get(i).getTextName().equals(getString(R.string.expenses))) {
                     showFragment(ExpenseManagerFragment.class, null);
+                }
+                if (mMenuItems.get(i).getTextName().equals(getString(R.string.budget))) {
+                    showFragment(BudgetFragment.class, null);
+                }
+                if (mMenuItems.get(i).getTextName().equals(getString(R.string.recommendation))) {
+                    showFragment(RecommendationFragment.class, null);
                 }
                 mDrawer.closeDrawer(mLayoutSideMenu);
             }
@@ -114,11 +138,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Main
 
     @Override
     public void showFragment(Class c, Bundle data) {
-        if (c == ExpenseManagerFragment.class) {
-            ExpenseManagerFragment fragment = (ExpenseManagerFragment) mFragments.get(c.getName());
+        BaseFragment fragment = mFragments.get(c.getName());
+        if (!c.getName().equals(BaseFragment.getCurrent())) {
             fragment.setArguments(data);
-            mManager.beginTransaction().replace(R.id.layoutFragmentsContainer, fragment, fragment.getClass().getName()).commit();
         }
+        mManager.beginTransaction().replace(R.id.layoutFragmentsContainer, fragment, fragment.getClass().getName()).commit();
+        BaseFragment.setCurrent(c.getName());
     }
 
     @Override
@@ -127,8 +152,17 @@ public class MainActivity extends Activity implements View.OnClickListener, Main
         mImageAvatar.setColor(color);
     }
 
-    protected void showFragment(String fragmentName) {
-        mManager.beginTransaction().replace(R.id.layoutFragmentsContainer, mFragments.get(fragmentName), fragmentName).commit();
+    @Override
+    public ArrayList<Object> getData(Class c) {
+        if (Product.class.equals(c)) {
+
+        }
+        return null;
+    }
+
+    @Override
+    public Context getContext() {
+        return MainActivity.this;
     }
 
     @Override
@@ -139,5 +173,15 @@ public class MainActivity extends Activity implements View.OnClickListener, Main
         mSideMenuAdapter.notifyDataSetChanged();
         OverViewFragment overViewFragment = (OverViewFragment) mFragments.get(OverViewFragment.class.getName());
         mManager.beginTransaction().replace(R.id.layoutFragmentsContainer, overViewFragment, overViewFragment.getClass().getName()).commit();
+        BaseFragment.setCurrent(OverViewFragment.class.getName());
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (BaseFragment.getCurrent().equals(OverViewFragment.class.getName())) {
+            super.onBackPressed();
+        } else {
+            navBack();
+        }
     }
 }

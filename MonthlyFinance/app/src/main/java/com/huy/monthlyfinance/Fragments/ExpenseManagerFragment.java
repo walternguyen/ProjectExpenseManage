@@ -1,6 +1,9 @@
 package com.huy.monthlyfinance.Fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -13,6 +16,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -41,7 +47,18 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.huy.monthlyfinance.Listener.NavigationListener;
+import com.huy.monthlyfinance.Database.DAO.AccountDAO;
+import com.huy.monthlyfinance.Database.DAO.ExpensesHistoryDAO;
+import com.huy.monthlyfinance.Database.DAO.ProductDAO;
+import com.huy.monthlyfinance.Database.DAO.ProductDetailDAO;
+import com.huy.monthlyfinance.Database.DAO.ProductGroupDAO;
+import com.huy.monthlyfinance.Database.DAO.UserDAO;
+import com.huy.monthlyfinance.MainApplication;
+import com.huy.monthlyfinance.Model.Account;
+import com.huy.monthlyfinance.Model.ExpensesHistory;
+import com.huy.monthlyfinance.Model.Product;
+import com.huy.monthlyfinance.Model.ProductDetail;
+import com.huy.monthlyfinance.Model.ProductGroup;
 import com.huy.monthlyfinance.MyView.BasicAdapter;
 import com.huy.monthlyfinance.MyView.Item.ListItem.BoughtProduct;
 import com.huy.monthlyfinance.MyView.Item.ListItem.ExpensesItem;
@@ -49,6 +66,7 @@ import com.huy.monthlyfinance.MyView.Item.ListItem.ProductDropdownItem;
 import com.huy.monthlyfinance.MyView.Item.ListItem.ProductImageItem;
 import com.huy.monthlyfinance.MyView.Item.ListItem.RadialItem;
 import com.huy.monthlyfinance.R;
+import com.huy.monthlyfinance.SupportUtils.PreferencesUtils;
 import com.huy.monthlyfinance.SupportUtils.SupportUtils;
 import com.kulik.radial.RadialListView;
 
@@ -63,9 +81,9 @@ import static android.app.Activity.RESULT_OK;
  * Created by Phuong on 26/08/2016.
  */
 public class ExpenseManagerFragment extends BaseFragment implements View.OnClickListener {
+
     private static final int SELECT_IMAGE = 1;
 
-    private NavigationListener mNavListener;
     private FrameLayout mLayoutInput;
     private ScrollView mLayoutForm;
     private BasicAdapter<RadialItem> mListRadialAdapter;
@@ -107,15 +125,15 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
     private EditText mEditProductCost;
     private EditText mEditProductUnit;
     private EditText mEditProductAmount;
-    private EditText mEditDate;
+    private TextView mEditDate;
     private ImageView mImageProductIcon;
     private int mCurrentGroup;
 
-    private TextView mTextTotalCost;
+    private EditText mTextTotalCost;
     private double mTotalCost;
     private String mConcurrency;
     private ProgressBar mCurrentPercentages;
-    private double mCurrentCash;
+    private double mCurrentBudget;
 
     private TextView mTextGroupName;
     private ImageView mImageGroup;
@@ -125,14 +143,22 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
     private Uri mCapturedImage;
 
     private Bitmap mProductBitmap;
+    private String mProductImageName;
 
     private boolean isFormOpen;
     private BasicAdapter<ProductDropdownItem> mDropdownAdapter;
 
-    private GridView mListImages;
-    private BasicAdapter<ProductImageItem> mImagesAdapter;
     private ArrayList<ProductImageItem> mListProductsImage;
     private FrameLayout mLayoutPickImages;
+
+    private ScrollView mLayoutExpensesStatistic;
+
+    private FrameLayout mLayoutPickAccount;
+    private TextView mTextAccount;
+    private ArrayList<Account> mListAccount;
+    private Account mSelectedAccount;
+
+    private TextView mTextCurrentBalances;
 
     @Override
     protected int getLayoutXML() {
@@ -145,6 +171,66 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
         if (bundle != null) {
             isFormOpen = bundle.getBoolean("isFormOpen");
         }
+        final Context context = mListener.getContext();
+        Resources resources = context.getResources();
+
+        mListAccount = MainApplication.getInstance().getAccounts();
+        if (mListAccount != null) {
+            if (!mListAccount.isEmpty()) {
+                mSelectedAccount = getAccount(SupportUtils.getStringLocalized(context, "en", R.string.cash));
+            }
+        }
+
+        if (mListProductExample == null) {
+            mListProductExample = new ArrayList<>();
+        }
+        if (mListProductExample.isEmpty()) {
+            ArrayList<Product> products = MainApplication.getInstance().getProducts();
+            if (!products.isEmpty()) {
+                for (Product product : products) {
+                    int resId = resources.getIdentifier(product.getProductImage(), "drawable", context.getPackageName());
+                    mListProductExample.add(
+                            new ProductDropdownItem(BitmapFactory.decodeResource(resources, resId), product, false));
+                }
+            }
+        }
+
+        if (mRadialItems == null) {
+            mRadialItems = new ArrayList<>();
+        }
+        if (mRadialItems.isEmpty()) {
+            ArrayList<ProductGroup> productGroups = new ArrayList<>();
+            productGroups.addAll(MainApplication.getInstance().getProductGroups());
+            RadialItem.OnClickListener listener = new RadialItem.OnClickListener() {
+                @Override
+                public void onClick(Bundle data) {
+                    if (data != null) {
+                        isFormOpen = data.getBoolean("isFormOpen");
+                        mTextRadialProduct.setText(data.getString("itemSelected"));
+                        mCurrentGroup = data.getInt("pos");
+                    }
+                    changeCurrentGroup();
+                    if (isFormOpen) {
+                        toggleForm(true);
+                    } else {
+                        Toast.makeText(context, "Press again to access form", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onLongClick(Bundle data) {
+
+                }
+            };
+            int index = 0;
+            for (ProductGroup productGroup : productGroups) {
+                int resId = resources.getIdentifier(productGroup.getGroupImage(), "drawable", context.getPackageName());
+                mRadialItems.add(new RadialItem(listener, SupportUtils.getCountryCode().toLowerCase().contains("us") ?
+                        productGroup.getGroupNameEN() : productGroup.getGroupNameVI(), BitmapFactory.decodeResource(resources, resId),
+                        index++));
+            }
+        }
+        ExpensesHistoryDAO.getInstance(getActivity()).getListTransactions();
     }
 
     @Override
@@ -159,9 +245,58 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
         mConcurrency = "$";
         mTotalCost = 0;
 
+        mTextCurrentBalances = (TextView) view.findViewById(R.id.textCurrentBalances);
+        mLayoutPickAccount = (FrameLayout) view.findViewById(R.id.layoutPickAccount);
+        mTextAccount = (TextView) view.findViewById(R.id.txtAccount);
+        mSelectedAccount = getAccount(SupportUtils.getStringLocalized(activity, "en", R.string.cash));
+        if (mSelectedAccount != null) {
+            mTextAccount.setText(mSelectedAccount.getAccountName());
+        }
+        mTextAccount.setOnClickListener(this);
+        view.findViewById(R.id.buttonSelectAccount).setOnClickListener(this);
+        view.findViewById(R.id.buttonCloseAccount).setOnClickListener(this);
+        view.findViewById(R.id.itemSelectCash).setOnClickListener(this);
+        view.findViewById(R.id.itemSelectBank).setOnClickListener(this);
+        view.findViewById(R.id.itemSelectCredit).setOnClickListener(this);
+        mLayoutExpensesStatistic = (ScrollView) view.findViewById(R.id.layoutExpensesStatistic);
         mLayoutPickImages = (FrameLayout) view.findViewById(R.id.layoutPickImage);
         mCurrentPercentages = (ProgressBar) view.findViewById(R.id.itemProgress);
-        mTextTotalCost = (TextView) view.findViewById(R.id.textTotalCost);
+        mTextTotalCost = (EditText) view.findViewById(R.id.textTotalCost);
+        final StringBuilder textTotal = new StringBuilder();
+        mTextTotalCost.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                textTotal.setLength(0);
+                textTotal.append(charSequence);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                double totalCost = editable.toString().isEmpty() ? 0 : Double.valueOf(editable.toString());
+                if (totalCost > mCurrentBudget) {
+                    Toast.makeText(activity, "Out of budget limit", Toast.LENGTH_SHORT).show();
+                    mTextTotalCost.removeTextChangedListener(this);
+                    mTextTotalCost.setText("");
+                    mTextTotalCost.setText(textTotal.toString());
+                    mTextTotalCost.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTextTotalCost.setSelection(mTextTotalCost.getText().toString().length());
+                        }
+                    });
+                    mTextTotalCost.addTextChangedListener(this);
+                } else {
+                    mTotalCost = totalCost;
+                    mCurrentPercentages.setProgress((int) mTotalCost);
+                    changePercentageProgressStyle();
+                }
+            }
+        });
         mTextGroupName = (TextView) view.findViewById(R.id.itemName);
         mImageGroup = (ImageView) view.findViewById(R.id.itemIcon);
         mEditProductName = (EditText) view.findViewById(R.id.edtProductName);
@@ -188,7 +323,7 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
                 }
             }
         });
-        mEditDate = (EditText) view.findViewById(R.id.edtProductDate);
+        mEditDate = (TextView) view.findViewById(R.id.edtProductDate);
         mEditDate.setText(mDate);
         mEditDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -365,40 +500,7 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
         mListExpensesDetail.setAdapter(mRadialAdapter);
         SupportUtils.setListViewHeight(mListExpensesDetail);
 
-        mRadialItems = new ArrayList<>();
         mListRadialAdapter = null;
-        if (mRadialItems.isEmpty()) {
-            RadialItem.OnClickListener listener = new RadialItem.OnClickListener() {
-                @Override
-                public void onClick(Bundle data) {
-                    if (data != null) {
-                        isFormOpen = data.getBoolean("isFormOpen");
-                        mTextRadialProduct.setText(data.getString("itemSelected"));
-                        mCurrentGroup = data.getInt("pos");
-                    }
-                    changeCurrentGroup();
-                    if (isFormOpen) {
-                        toggleForm(true);
-                    } else {
-                        Toast.makeText(activity, "Press again to access form", Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onLongClick(Bundle data) {
-
-                }
-            };
-            int index = 0;
-            mRadialItems.add(new RadialItem(listener, mExpenses[0], BitmapFactory.decodeResource(resources, R.drawable.receipt), index++));
-            mRadialItems.add(new RadialItem(listener, mExpenses[1], BitmapFactory.decodeResource(resources, R.drawable.stethoscope), index++));
-            mRadialItems.add(new RadialItem(listener, mExpenses[2], BitmapFactory.decodeResource(resources, R.drawable.game_controller), index++));
-            mRadialItems.add(new RadialItem(listener, mExpenses[3], BitmapFactory.decodeResource(resources, R.drawable.turkey), index++));
-            mRadialItems.add(new RadialItem(listener, mExpenses[4], BitmapFactory.decodeResource(resources, R.drawable.shirt), index++));
-            mRadialItems.add(new RadialItem(listener, mExpenses[5], BitmapFactory.decodeResource(resources, R.drawable.car), index++));
-            mRadialItems.add(new RadialItem(listener, mExpenses[6], BitmapFactory.decodeResource(resources, R.drawable.home), index++));
-            mRadialItems.add(new RadialItem(listener, mExpenses[7], BitmapFactory.decodeResource(resources, R.drawable.family), index++));
-        }
         mListRadialAdapter =
                 new BasicAdapter<>(mRadialItems, R.layout.item_radial, inflater);
         mListExpense.setAdapter(mListRadialAdapter);
@@ -409,54 +511,27 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
         mLayoutSelectDate = (FrameLayout) view.findViewById(R.id.layoutPickDate);
         mLayoutSelectUnit = (FrameLayout) view.findViewById(R.id.layoutPickUnit);
         mListProductExamples = (ListView) view.findViewById(R.id.listProducts);
-        if (mListProductExample == null) {
-            mListProductExample = new ArrayList<>();
-        }
-        if (mListProductExample.isEmpty()) {
-            mListProductExample.add(
-                    new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.turkey), resources.getString(R.string.sample_1)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.salad), resources.getString(R.string.sample_2)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.hamburguer), resources.getString(R.string.sample_3)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.rice), resources.getString(R.string.sample_4)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.can), resources.getString(R.string.sample_5)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.shirt), resources.getString(R.string.sample_6)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.shoe), resources.getString(R.string.sample_7)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.dress), resources.getString(R.string.sample_8)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.jacket), resources.getString(R.string.sample_9)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.pants), resources.getString(R.string.sample_10)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.copier), resources.getString(R.string.sample_11)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.bookshelf), resources.getString(R.string.sample_12)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.writing_tool), resources.getString(R.string.sample_13)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.desktop_computer), resources.getString(R.string.sample_14)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.laptop), resources.getString(R.string.sample_15)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.smartphone), resources.getString(R.string.sample_16)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.smartwatch), resources.getString(R.string.sample_17)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.mouse), resources.getString(R.string.sample_18)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.camera), resources.getString(R.string.sample_19)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.pendrive), resources.getString(R.string.sample_20)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.headset), resources.getString(R.string.sample_21)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.desk_lamp), resources.getString(R.string.sample_22)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.cooler), resources.getString(R.string.sample_23)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.television), resources.getString(R.string.sample_24)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.gas_pipe), resources.getString(R.string.sample_25)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.gas_station), resources.getString(R.string.sample_26)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.oil), resources.getString(R.string.sample_27)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.band_aid), resources.getString(R.string.sample_28)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.syringe), resources.getString(R.string.sample_29)));
-            mListProductExample.add(new ProductDropdownItem(BitmapFactory.decodeResource(resources, R.drawable.pills), resources.getString(R.string.sample_30)));
-        }
+
         mDropdownAdapter = new BasicAdapter<>(mListProductExample, R.layout.item_drop_down_1, inflater);
         mListProductExamples.setAdapter(mDropdownAdapter);
         mListProductExamples.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ProductDropdownItem item = mListProductExample.get(i);
-                mEditProductName.setText(item.getName());
-                mProductBitmap = item.getBitmap();
-                mImageProductIcon.setImageBitmap(mProductBitmap);
+                if (!item.isFocused()) {
+                    mEditProductName.setText(item.getProduct().getProductNameEN());
+                    mProductBitmap = item.getBitmap();
+                    mImageProductIcon.setImageBitmap(mProductBitmap);
+                    mProductImageName = item.getProduct().getProductImage();
+                    mEditProductCost.setText("");
+                } else {
+                    mEditProductName.setText("");
+                    mImageProductIcon.setImageResource(R.mipmap.ic_expense_green_1_24dp);
+                    mProductImageName = null;
+                    mEditProductCost.setText("");
+                }
                 item.setFocused(!item.isFocused());
-                mEditProductCost.setText("");
-                mDropdownAdapter.notifyDataSetChanged();
+                mBoughtProductsAdapter.notifyDataSetChanged();
                 scrollToView(mLayoutForm, mEditProductAmount);
             }
         });
@@ -483,44 +558,29 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
             mListProductsImage = new ArrayList<>();
         }
         if (mListProductsImage.isEmpty()) {
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.bed)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.bike)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.carousel)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.chest_of_drawers)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.dental_care)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.desk)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.dog_eating)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.electricity)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.glasses)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.milk)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.motorcycle)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.nurse)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.puzzle)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.refrigerator)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.salad_1)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.sandwich)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.soccer_ball_variant)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.socks)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.sunbed)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.tap)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.tea_cup)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.teddy_bear)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.toilet_paper)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.travel)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.underwear)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.vacuum_cleaner)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.washing_machine)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.wifi)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.wine_glasses)));
-            mListProductsImage.add(new ProductImageItem(BitmapFactory.decodeResource(resources, R.drawable.wristwatch)));
+            int[] drawables = {R.drawable.bike, R.drawable.carousel, R.drawable.chest_of_drawers, R.drawable.dental_care,
+                    R.drawable.desk, R.drawable.dog_eating, R.drawable.electricity, R.drawable.glasses,
+                    R.drawable.milk, R.drawable.motorcycle, R.drawable.nurse, R.drawable.puzzle,
+                    R.drawable.refrigerator, R.drawable.salad_1, R.drawable.sandwich, R.drawable.soccer_ball_variant,
+                    R.drawable.socks, R.drawable.sunbed, R.drawable.tap, R.drawable.tea_cup, R.drawable.toilet_paper,
+                    R.drawable.travel, R.drawable.underwear, R.drawable.vacuum_cleaner, R.drawable.washing_machine,
+                    R.drawable.wifi, R.drawable.wine_glasses, R.drawable.wristwatch
+            };
+            for (int drawable : drawables) {
+                mListProductsImage.add(new ProductImageItem(
+                        BitmapFactory.decodeResource(resources, drawable),
+                        resources.getResourceEntryName(drawable)
+                ));
+            }
         }
-        mImagesAdapter = new BasicAdapter<>(mListProductsImage, R.layout.item_image, inflater);
-        mListImages = (GridView) view.findViewById(R.id.gridImages);
+        BasicAdapter<ProductImageItem> mImagesAdapter = new BasicAdapter<>(mListProductsImage, R.layout.item_image, inflater);
+        GridView mListImages = (GridView) view.findViewById(R.id.gridImages);
         mListImages.setAdapter(mImagesAdapter);
         mListImages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 mImageProductIcon.setImageBitmap(mListProductsImage.get(i).getBitmap());
+                mProductImageName = mListProductsImage.get(i).getDrawableName();
             }
         });
         mListImages.setOnTouchListener(new View.OnTouchListener() {
@@ -549,6 +609,81 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
 
         }
         mListUnitExamples = (ListView) view.findViewById(R.id.listUnits);
+    }
+
+    @Override
+    protected void setStatusBarColor() {
+        mListener.setStatusBarColor(Color.parseColor("#5f7c89"));
+    }
+
+    @Override
+    protected int getSideMenuColor() {
+        return Color.parseColor("#5f7c89");
+    }
+
+    @Override
+    protected void fragmentReady(Bundle savedInstanceState) {
+        mCurrentBudget = getCurrentCash();
+        mCurrentPercentages.setMax((int) mCurrentBudget);
+        mCurrentPercentages.setProgress(0);
+        toggleForm(isFormOpen);
+        changeCurrentGroup();
+        mListProducts = new ArrayList<>();
+        mBoughtProductsAdapter = new BasicAdapter<>(mListProducts, R.layout.item_added_product, getActivity().getLayoutInflater());
+        mListBoughtProducts.setAdapter(mBoughtProductsAdapter);
+        mListBoughtProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                BoughtProduct product = mListProducts.get(i);
+                mEditProductName.setText(product.getName());
+                mProductBitmap = product.getImage();
+                mProductImageName = product.getData().getProductImage();
+                mImageProductIcon.setImageBitmap(mProductBitmap);
+                mEditProductCost.setText(String.valueOf(product.getPrice()));
+                mLayoutForm.scrollTo(0, 0);
+            }
+        });
+        mListBoughtProducts.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                final int position = i;
+                final Activity activity = getActivity();
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity)
+                        .setTitle("Do you want to delete this item?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mListProducts.remove(position);
+                                mBoughtProductsAdapter.notifyDataSetChanged();
+                                SupportUtils.setListViewHeight(mListBoughtProducts);
+                                Toast.makeText(activity, "Deleted", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                alertDialog.create().show();
+                return false;
+            }
+        });
+        mLayoutExpensesStatistic.smoothScrollTo(0, (int) (mListExpensesDetail.getY() + SupportUtils.dip2Pixel(getActivity(), 20)));
+        mButtonAdd.setOnClickListener(this);
+
+        StringBuilder builder = new StringBuilder();
+        for (Account account : mListAccount) {
+            if (!account.getAccountName().contains(SupportUtils.getStringLocalized(getActivity(), "en", R.string.bank))) {
+                builder.append(account.getAccountName()).append(": ").append(account.getCurrentBalance()).append(" ");
+            }
+        }
+        mTextCurrentBalances.setText(builder.toString());
+    }
+
+    @Override
+    protected boolean canGoBack() {
+        return mLayoutForm.getVisibility() == View.GONE;
     }
 
     private void writeFakeData(ArrayList<ExpensesItem> listExpenses, String[] expenses,
@@ -610,48 +745,6 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
         });
     }
 
-    @Override
-    protected void setStatusBarColor() {
-        mListener.setStatusBarColor(Color.parseColor("#5f7c89"));
-    }
-
-    @Override
-    protected int getSideMenuColor() {
-        return Color.parseColor("#5f7c89");
-    }
-
-    @Override
-    protected void fragmentReady(Bundle savedInstanceState) {
-        mCurrentCash = getCurrentCash();
-        mCurrentPercentages.setMax((int) mCurrentCash);
-        mCurrentPercentages.setProgress(0);
-        toggleForm(isFormOpen);
-        changeCurrentGroup();
-        mListProducts = new ArrayList<>();
-        mBoughtProductsAdapter = new BasicAdapter<>(mListProducts, R.layout.item_added_product, getActivity().getLayoutInflater());
-        mListBoughtProducts.setAdapter(mBoughtProductsAdapter);
-        mListBoughtProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                BoughtProduct product = mListProducts.get(i);
-                mEditProductName.setText(product.getName());
-                mProductBitmap = product.getImage();
-                mImageProductIcon.setImageBitmap(mProductBitmap);
-                mEditProductCost.setText(String.valueOf(product.getPrice()));
-                mLayoutForm.scrollTo(0, 0);
-            }
-        });
-        mButtonAdd.setOnClickListener(this);
-    }
-
-    public void setNavListener(NavigationListener NavListener) {
-        this.mNavListener = NavListener;
-    }
-
-    private boolean canGoBack() {
-        return mLayoutForm.getVisibility() == View.GONE;
-    }
-
     private void toggleLayoutProducts(boolean visible) {
         mLayoutSelectProduct.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
@@ -694,8 +787,8 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
         mImageProductIcon.setImageResource(R.mipmap.ic_expense_green_1_24dp);
         mListProducts.clear();
         mBoughtProductsAdapter.notifyDataSetChanged();
-        mCurrentCash = getCurrentCash();
-        mTextTotalCost.setText("$0");
+        mCurrentBudget = getCurrentCash();
+        mTextTotalCost.setText("0");
         mCurrentPercentages.setProgress(0);
         mCurrentGroup = 0;
         changeCurrentGroup();
@@ -709,24 +802,28 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
     private void storeData() {
         //mListProducts contains all bought products that are added on form. Store all of them into database
         //mTotalCost is the total of all bought products
-        //mCurrentCash is the current cash that not include the mTotalCost. Do mCurrentCash -= mTotalCost and store it
+        //mCurrentBudget is the current cash that not include the mTotalCost. Do mCurrentBudget -= mTotalCost and store it
     }
 
     private double getCurrentCash() {
-        return 1000;
+        double result = 0;
+        for (Account account : mListAccount) {
+            result += account.getCurrentBalance();
+        }
+        return result;
     }
 
     private void changePercentageProgressStyle() {
-        Resources resources = getResources();
-        double percent = mTotalCost / mCurrentCash;
+        Activity activity = getActivity();
+        double percent = (double) mCurrentPercentages.getProgress() / mCurrentPercentages.getMax();
         if (percent <= 0.25) {
-            mCurrentPercentages.setProgressDrawable(resources.getDrawable(R.drawable.progress_style_1));
+            mCurrentPercentages.setProgressDrawable(ContextCompat.getDrawable(activity, R.drawable.progress_style_1));
         } else if (percent <= 0.5) {
-            mCurrentPercentages.setProgressDrawable(resources.getDrawable(R.drawable.progress_style_11));
+            mCurrentPercentages.setProgressDrawable(ContextCompat.getDrawable(activity, R.drawable.progress_style_11));
         } else if ((percent <= 0.75)) {
-            mCurrentPercentages.setProgressDrawable(resources.getDrawable(R.drawable.progress_style_4));
+            mCurrentPercentages.setProgressDrawable(ContextCompat.getDrawable(activity, R.drawable.progress_style_4));
         } else {
-            mCurrentPercentages.setProgressDrawable(resources.getDrawable(R.drawable.progress_style_10));
+            mCurrentPercentages.setProgressDrawable(ContextCompat.getDrawable(activity, R.drawable.progress_style_10));
         }
     }
 
@@ -741,6 +838,8 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
 
     @Override
     public void onClick(View view) {
+        Activity activity = getActivity();
+        Resources resources = activity.getResources();
         switch (view.getId()) {
             case R.id.buttonBack:
                 if (canGoBack()) {
@@ -797,50 +896,156 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
                 }
                 break;
             case R.id.buttonAdd:
-                String name = mEditProductName.getText().toString();
-                String price = mEditProductCost.getText().toString();
-                String unit = mEditProductUnit.getText().toString();
-                Drawable drawable = mImageProductIcon.getDrawable();
-                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                double num_price = Double.valueOf(price.length() > 0 ? price : "0");
                 String message = null;
-                if (num_price > 0 && !name.isEmpty()) {
-                    BoughtProduct product = new BoughtProduct(bitmap, name, unit, num_price, false);
-                    boolean existed = false;
-                    if (mTotalCost + num_price > mCurrentCash) {
-                        message = "Current total exceeds your cash limit";
-                    } else {
-                        for (int i = 0; i < mListProducts.size() && !existed; i++) {
-                            BoughtProduct boughtProduct = mListProducts.get(i);
-                            existed = boughtProduct.equals(product);
-                            if (existed) {
-                                mTotalCost += num_price - boughtProduct.getPrice();
-                                boughtProduct.setPrice(num_price);
-                            }
-                        }
-                        if (existed) {
-                            message = "This item is already existed";
-                        } else {
-                            mListProducts.add(product);
-                            mTotalCost += product.getPrice();
-                        }
-                        mTextTotalCost.setText(mConcurrency + mTotalCost);
-                        mBoughtProductsAdapter.notifyDataSetChanged();
-                        mCurrentPercentages.setProgress((int) mTotalCost);
-                        changePercentageProgressStyle();
-                        SupportUtils.setListViewHeight(mListBoughtProducts);
+                ArrayList<ProductDropdownItem> productDropdownItems = new ArrayList<>();
+                for (ProductDropdownItem productDropdownItem : mListProductExample) {
+                    if (productDropdownItem.isFocused()) {
+                        productDropdownItems.add(productDropdownItem);
                     }
-                } else {
-                    message = "You're missing some information";
                 }
-                if (message != null) {
-                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                if (productDropdownItems.isEmpty()) {
+                    String name = mEditProductName.getText().toString();
+                    if (!name.isEmpty()) {
+                        String nameEN = SupportUtils.getCountryCode().toLowerCase().contains("us") ? name : "";
+                        String nameVI = SupportUtils.getCountryCode().toLowerCase().contains("vi") ? name : "";
+                        String unit = mEditProductUnit.getText().toString();
+                        String group = mTextGroupName.getText().toString();
+                        int groupID = ProductGroupDAO.getInstance(activity).getGroupIDByName(group);
+                        Drawable drawable = mImageProductIcon.getDrawable();
+                        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+                        Product p = new Product(nameEN, nameVI, String.valueOf(groupID), unit, mProductImageName);
+                        productDropdownItems.add(new ProductDropdownItem(bitmap, p, false));
+                    } else {
+                        message = "You're missing some information";
+                    }
+                    if (message != null) {
+                        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                if (!productDropdownItems.isEmpty()) {
+                    for (ProductDropdownItem item : productDropdownItems) {
+                        Product p = item.getProduct();
+                        if (!isProductExisted(p)) {
+                            if (ProductDAO.getInstance(activity).doInsertTblProduct(p)) {
+                                p.setProductID(String.valueOf(ProductDAO.getInstance(activity).getLatestProductId()));
+                                MainApplication.getInstance().getProducts().add(p);
+                            }
+                        } else {
+                            p.setProductID(getProductID(p.getProductNameEN(), p.getProductNameVI()));
+                        }
+                        BoughtProduct product = new BoughtProduct(item.getBitmap(), 0, false, p);
+                        mListProducts.add(product);
+                    }
+                    mBoughtProductsAdapter.notifyDataSetChanged();
+                    SupportUtils.setListViewHeight(mListBoughtProducts);
                 }
                 break;
             case R.id.buttonConfirmExpenses:
+                if (!mListProducts.isEmpty()) {
+                    ExpensesHistoryDAO expensesHistoryDAO = ExpensesHistoryDAO.getInstance(activity);
+                    String date = mEditDate.getText().toString();
+                    int userId = UserDAO.getInstance(activity).
+                            getUserId(PreferencesUtils.getString(PreferencesUtils.CURRENT_EMAIL, ""));
+                    if (!date.isEmpty() && userId >= 0) {
+                        ExpensesHistory transaction =
+                                new ExpensesHistory(mSelectedAccount.getAccountID(), String.valueOf(userId), date, mTotalCost);
+                        if (expensesHistoryDAO.insertTransaction(transaction)) {
+                            message = "Transaction's saved";
+                            int transactionId = expensesHistoryDAO.getLatestTransactionID();
+                            if (transactionId > 0) {
+                                String id = String.valueOf(transactionId);
+                                ProductDetailDAO productDetailDAO = ProductDetailDAO.getInstance(activity);
+                                for (BoughtProduct boughtProduct : mListProducts) {
+                                    productDetailDAO.insertProductDetail(
+                                            new ProductDetail(boughtProduct.getData().getProductID(), id, 0, 0));
+                                }
+                            }
+                            String cost = mTextTotalCost.getText().toString();
+                            double totalCost = cost.isEmpty() ? 0 : Double.valueOf(cost);
+                            double cash = 0;
+                            double credit = 0;
+                            for (Account account : mListAccount) {
+                                if (account.getAccountName().contains(
+                                        SupportUtils.getStringLocalized(activity, "en", R.string.cash)) ||
+                                        account.getAccountName().contains(
+                                                SupportUtils.getStringLocalized(activity, "vi", R.string.cash))) {
+                                    cash = account.getCurrentBalance();
+                                }
+                                if (account.getAccountName().contains(
+                                        SupportUtils.getStringLocalized(activity, "en", R.string.credit_card)) ||
+                                        account.getAccountName().contains(
+                                                SupportUtils.getStringLocalized(activity, "vi", R.string.credit_card))) {
+                                    credit = account.getCurrentBalance();
+                                }
+                            }
+                            AccountDAO accountDAO = AccountDAO.getInstance(activity);
+                            if (cash > 0) {
+                                double newCash = (cash > totalCost) ? cash - totalCost : 0;
+                                double leftOver = (totalCost > cash) ? totalCost - cash : 0;
+                                accountDAO.updateAccount(SupportUtils.getStringLocalized(activity, "en", R.string.cash), newCash);
+                                if (leftOver > 0) {
+                                    double newCredit = (credit > leftOver) ? credit - leftOver : 0;
+                                    leftOver = (leftOver > credit) ? leftOver - credit : 0;
+                                    accountDAO.updateAccount(SupportUtils.getStringLocalized(activity, "en", R.string.credit_card), newCredit);
+                                    if (leftOver > 0) {
+                                        message = "Your cash and credit balance is not enough." +
+                                                " Please pay some money into them or transfer from bank";
+                                    } else {
+                                        message = "Your cash balance is not enough." +
+                                                " We had to use your credit account";
+                                    }
+                                } else {
+                                    message = "Your cash balance is up to date";
+                                }
+                            } else if (credit > 0) {
+                                double newCredit = (credit > totalCost) ? credit - totalCost : 0;
+                                double leftOver = (totalCost > credit) ? totalCost - credit : 0;
+                                accountDAO.updateAccount(SupportUtils.getStringLocalized(activity, "en", R.string.credit_card), newCredit);
+                                if (leftOver > 0) {
+                                    message = "Your cash and credit balance is not enough." +
+                                            " Please pay some money into them or transfer from bank";
+                                } else {
+                                    message = "Your cash balance is not enough." +
+                                            " We had to use your credit account";
+                                }
+                            }
+                            MainApplication.getInstance().refreshAllData();
+                        } else {
+                            message = "An error occur";
+                        }
+                        Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+                        mLayoutForm.setVisibility(View.GONE);
+                    }
+                }
                 break;
             case R.id.buttonCancelExpenses:
                 clearForm();
+                break;
+            case R.id.buttonSelectAccount:
+            case R.id.txtAccount:
+                mLayoutPickAccount.setVisibility(mLayoutPickAccount.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+                break;
+            case R.id.buttonCloseAccount:
+                mLayoutPickAccount.setVisibility(View.GONE);
+                break;
+            case R.id.itemSelectBank:
+                mSelectedAccount = getAccount(SupportUtils.getStringLocalized(activity, "en", R.string.bank));
+                if (mSelectedAccount != null) {
+                    mTextAccount.setText(mSelectedAccount.getAccountName());
+                }
+                break;
+            case R.id.itemSelectCash:
+                mSelectedAccount = getAccount(SupportUtils.getStringLocalized(activity, "en", R.string.cash));
+                if (mSelectedAccount != null) {
+                    mTextAccount.setText(mSelectedAccount.getAccountName());
+                }
+                break;
+            case R.id.itemSelectCredit:
+                mSelectedAccount = getAccount(SupportUtils.getStringLocalized(activity, "en", R.string.credit_card));
+                if (mSelectedAccount != null) {
+                    mTextAccount.setText(mSelectedAccount.getAccountName());
+                }
                 break;
             default:
                 break;
@@ -858,18 +1063,19 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
 
         File root = new File(Environment.getExternalStorageDirectory() + File.separator + "Captured" + File.separator);
         if (!root.exists()) {
-            root.mkdirs();
+            if (root.mkdirs()) {
+                String name = "Captured_" + System.nanoTime();
+                File dir = new File(root, name);
+                mCapturedImage = Uri.fromFile(dir);
+
+                Intent intentTakePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intentTakePhoto.putExtra(MediaStore.EXTRA_OUTPUT, mCapturedImage);
+
+                Intent intentChooser = Intent.createChooser(intentPick, "Select a source");
+                intentChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{intentTakePhoto});
+                startActivityForResult(intentChooser, SELECT_IMAGE);
+            }
         }
-        String name = "Captured_" + System.nanoTime();
-        File dir = new File(root, name);
-        mCapturedImage = Uri.fromFile(dir);
-
-        Intent intentTakePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intentTakePhoto.putExtra(MediaStore.EXTRA_OUTPUT, mCapturedImage);
-
-        Intent intentChooser = Intent.createChooser(intentPick, "Select a source");
-        intentChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{intentTakePhoto});
-        startActivityForResult(intentChooser, SELECT_IMAGE);
     }
 
     @Override
@@ -878,17 +1084,7 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case SELECT_IMAGE:
-                    boolean isFromCamera;
-                    if (data == null) {
-                        isFromCamera = true;
-                    } else {
-                        if (data.getAction() == null) {
-                            isFromCamera = true;
-                        } else {
-                            isFromCamera = data.getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE);
-                        }
-                    }
-
+                    boolean isFromCamera = data == null ? true : (data.getAction() == null ? true : data.getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE));
                     String path;
                     if (isFromCamera) {
                         path = SupportUtils.getPath(mCapturedImage, getActivity().getApplicationContext());
@@ -904,5 +1100,56 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
                     break;
             }
         }
+    }
+
+    private String getProductID(String nameEN, String nameVI) {
+        for (ProductDropdownItem productDropdownItem : mListProductExample) {
+            Product product = productDropdownItem.getProduct();
+            if (product != null) {
+                if (product.getProductNameEN().equals(nameEN) || product.getProductNameVI().equals(nameVI)) {
+                    return product.getProductID();
+                }
+            }
+        }
+        return "";
+    }
+
+    private boolean isProductExisted(Product product) {
+        if (product != null) {
+            if (!mListProductExample.isEmpty()) {
+                for (ProductDropdownItem item : mListProductExample) {
+                    Product p = item.getProduct();
+                    boolean checkName = p.getProductNameEN().equals(product.getProductNameEN()) ||
+                            p.getProductNameEN().equals(product.getProductNameVI()) ||
+                            p.getProductNameVI().equals(product.getProductNameEN()) ||
+                            p.getProductNameVI().equals(product.getProductNameVI());
+
+                    if (checkName) {
+                        return true;
+                    } else {
+                        boolean checkImage = p.getProductImage().equals(product.getProductImage());
+                        boolean checkUnit = p.getProductImage().equals(product.getProductImage());
+                        if (checkImage && checkUnit) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private Account getAccount(String name) {
+        for (int i = 0; i < mListAccount.size(); i++) {
+            if (mListAccount.get(i).getAccountName().equals(name)) {
+                return mListAccount.get(i);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void refreshData() {
+
     }
 }

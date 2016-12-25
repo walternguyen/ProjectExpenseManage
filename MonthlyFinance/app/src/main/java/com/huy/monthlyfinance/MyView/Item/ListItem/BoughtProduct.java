@@ -5,7 +5,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.huy.monthlyfinance.Model.Product;
 import com.huy.monthlyfinance.R;
+import com.huy.monthlyfinance.SupportUtils.SupportUtils;
 
 /**
  * Created by Phuong on 05/10/2016.
@@ -13,26 +15,14 @@ import com.huy.monthlyfinance.R;
 
 public class BoughtProduct extends BaseItem {
     private Bitmap mImage;
-    private String mName;
-    private String mUnit;
+    private Product mData;
     private double mPrice;
-    private int mAmount;
     private boolean isNew;
 
-    public BoughtProduct(Bitmap Image, String Name, String Unit, double Price, int Amount, boolean isNew) {
-        this.mImage = Image;
-        this.mName = Name;
-        this.mUnit = Unit;
-        this.mPrice = Price;
-        this.mAmount = Amount;
-        this.isNew = isNew;
-    }
-
-    public BoughtProduct(Bitmap Image, String Name, String Unit, double Price, boolean isNew) {
-        this.mImage = Image;
-        this.mName = Name;
-        this.mUnit = Unit;
-        this.mPrice = Price;
+    public BoughtProduct(Bitmap mImage, double mPrice, boolean isNew, Product mData) {
+        this.mImage = mImage;
+        this.mData = mData;
+        this.mPrice = mPrice;
         this.isNew = isNew;
     }
 
@@ -41,7 +31,26 @@ public class BoughtProduct extends BaseItem {
         ImageView imageView = (ImageView) view.findViewById(R.id.imageIcon);
         imageView.setImageBitmap(mImage);
         TextView textName = (TextView) view.findViewById(R.id.textName);
-        textName.setText(mName);
+        String name = "";
+        String countryCode = SupportUtils.getCountryCode();
+        if (countryCode.toLowerCase().contains("us")) {
+            name = mData.getProductNameEN();
+            if (name == null) {
+                name = mData.getProductNameVI();
+            }
+            if (name.isEmpty()) {
+                name = mData.getProductNameVI();
+            }
+        } else {
+            name = mData.getProductNameVI();
+            if (name == null) {
+                name = mData.getProductNameEN();
+            }
+            if (name.isEmpty()) {
+                name = mData.getProductNameEN();
+            }
+        }
+        textName.setText(name);
         TextView textPrice = (TextView) view.findViewById(R.id.textNumber);
         textPrice.setText(String.valueOf(mPrice));
         view.findViewById(R.id.iconNew).setVisibility(isNew ? View.VISIBLE : View.GONE);
@@ -49,19 +58,12 @@ public class BoughtProduct extends BaseItem {
 
     @Override
     public boolean equals(Object obj) {
-        BoughtProduct product = (BoughtProduct) obj;
-        if (product != null) {
-            return mName.equals(product.mName) && mUnit.equals(product.mUnit);
+        if (obj.getClass().equals(BoughtProduct.class)) {
+            BoughtProduct product = (BoughtProduct) obj;
+            return mData.getProductNameEN().equals(product.mData.getProductNameEN())
+                    && mData.getUnitCalculation().equals(product.mData.getUnitCalculation());
         }
-        return super.equals(obj);
-    }
-
-    public int getAmount() {
-        return mAmount;
-    }
-
-    public void setAmount(int Amount) {
-        this.mAmount = Amount;
+        return false;
     }
 
     public double getPrice() {
@@ -73,9 +75,14 @@ public class BoughtProduct extends BaseItem {
     }
 
     public String getName() {
-        return mName;
+        return mData.getProductNameEN();
     }
+
     public Bitmap getImage() {
         return mImage;
+    }
+
+    public Product getData() {
+        return mData;
     }
 }

@@ -22,6 +22,10 @@ abstract class BaseDAO {
             mHelper = new DatabaseHelper(context);
         }
 
+        if (mValues == null) {
+            mValues = new ContentValues();
+        }
+
         if (mReadableDatabase == null) {
             mReadableDatabase = mHelper.getReadableDatabase();
         }
