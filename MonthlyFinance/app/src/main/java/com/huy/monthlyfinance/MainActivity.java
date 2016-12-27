@@ -106,6 +106,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Main
 
         mManager = getFragmentManager();
         mManager.beginTransaction().add(R.id.layoutFragmentsContainer, overViewFragment, overViewFragment.getClass().getName()).commit();
+        BaseFragment.setCurrent(overViewFragment.getClass().getName());
     }
 
     private void addFragment(BaseFragment fragment) {
@@ -178,10 +179,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Main
 
     @Override
     public void onBackPressed() {
-        if (BaseFragment.getCurrent().equals(OverViewFragment.class.getName())) {
-            super.onBackPressed();
-        } else {
-            navBack();
+        if (BaseFragment.getCurrent() != null) {
+            if (BaseFragment.getCurrent().equals(OverViewFragment.class.getName())) {
+                super.onBackPressed();
+            } else {
+                navBack();
+            }
         }
     }
 }

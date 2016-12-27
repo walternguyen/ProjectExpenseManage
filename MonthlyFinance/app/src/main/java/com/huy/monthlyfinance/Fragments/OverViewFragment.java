@@ -103,7 +103,9 @@ public class OverViewFragment extends BaseFragment implements View.OnClickListen
 
         final ImageButton mButtonAddReminder = (ImageButton) view.findViewById(R.id.buttonAddReminder);
         final ImageButton mButtonAddTransfer = (ImageButton) view.findViewById(R.id.buttonAddTransfer);
+        mButtonAddTransfer.setOnClickListener(this);
         final ImageButton mButtonAddCash = (ImageButton) view.findViewById(R.id.buttonAddCash);
+        mButtonAddCash.setOnClickListener(this);
         final ImageButton mButtonAddExpense = (ImageButton) view.findViewById(R.id.buttonAddExpense);
         mButtonAddExpense.setOnClickListener(this);
 
@@ -194,7 +196,9 @@ public class OverViewFragment extends BaseFragment implements View.OnClickListen
             for (Account account : mListAccount) {
                 totalBalance += account.getCurrentBalance();
             }
-            StringBuilder builder = new StringBuilder("").append((int) totalBalance).append(" ").append(currency);
+            StringBuilder builder = new StringBuilder("")
+                    .append(SupportUtils.getNormalDoubleString((int) totalBalance, "#0,0000"))
+                    .append(" ").append(currency);
             if (currency.toLowerCase().equals("vnd")) {
                 mBalanceValue.setText(builder.toString());
             }
@@ -227,10 +231,12 @@ public class OverViewFragment extends BaseFragment implements View.OnClickListen
                 int resIndex = 0;
                 String accountName = account.getAccountName();
                 String currency = account.getCurrency();
-                double currentBalance = account.getCurrentBalance();
-                double initBalance = account.getInitialBalance();
-                String stringCurrentBalance = currency.toLowerCase().equals("usd") ? ("$" + currentBalance) : (currentBalance + " vnđ");
-                String stringInitBalance = currency.toLowerCase().equals("usd") ? ("$" + initBalance) : (initBalance + " vnđ");
+                int currentBalance = (int) account.getCurrentBalance();
+                int initBalance = (int) account.getInitialBalance();
+                String current = SupportUtils.getNormalDoubleString(currentBalance, "#0,0000");
+                String init = SupportUtils.getNormalDoubleString(initBalance, "#0,0000");
+                String stringCurrentBalance = currency.toLowerCase().equals("usd") ? ("$" + current) : (current + " vnđ");
+                String stringInitBalance = currency.toLowerCase().equals("usd") ? ("$" + init) : (init + " vnđ");
                 if (accountName.equals(SupportUtils.getStringLocalized(getActivity(), "en", R.string.bank))) {
                     resIndex = 1;
                 } else if (accountName.equals(SupportUtils.getStringLocalized(getActivity(), "en", R.string.credit_card))) {
@@ -323,6 +329,12 @@ public class OverViewFragment extends BaseFragment implements View.OnClickListen
                 bundle.putBoolean("isFormOpen", true);
                 mListener.showFragment(ExpenseManagerFragment.class, bundle);
                 break;
+            case R.id.layoutButtonAddIncome:
+            case R.id.buttonAddCash:
+                bundle = new Bundle();
+                bundle.putBoolean("isAddIncome", true);
+                mListener.showFragment(BudgetFragment.class, bundle);
+                break;
             default:
                 break;
         }
@@ -349,8 +361,10 @@ public class OverViewFragment extends BaseFragment implements View.OnClickListen
             String currency = account.getCurrency();
             double currentBalance = account.getCurrentBalance();
             double initBalance = account.getInitialBalance();
-            String stringCurrentBalance = currency.toLowerCase().equals("usd") ? ("$" + currentBalance) : (currentBalance + " vnđ");
-            String stringInitBalance = currency.toLowerCase().equals("usd") ? ("$" + initBalance) : (initBalance + " vnđ");
+            String current = SupportUtils.getNormalDoubleString(currentBalance, "#0,0000");
+            String init = SupportUtils.getNormalDoubleString(initBalance, "#0,0000");
+            String stringCurrentBalance = currency.toLowerCase().equals("usd") ? ("$" + current) : (current + " vnđ");
+            String stringInitBalance = currency.toLowerCase().equals("usd") ? ("$" + init) : (init + " vnđ");
             Context context = getActivity();
             if (context == null) {
                 context = MainApplication.getInstance().getApplicationContext();

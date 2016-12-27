@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huy.monthlyfinance.Database.DAO.AccountDAO;
@@ -50,6 +52,11 @@ public class StartActivity extends Activity implements View.OnClickListener{
         mEdtEmail = (EditText) findViewById(R.id.edtEmail);
         mEdtCurrency = (EditText) findViewById(R.id.edtCurrency);
         findViewById(R.id.buttonConfirm).setOnClickListener(this);
+        Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/Android Insomnia Regular.ttf");
+        TextView textBanner1 = (TextView) findViewById(R.id.txtBanner1);
+        TextView textBanner2 = (TextView) findViewById(R.id.txtBanner2);
+        textBanner1.setTypeface(myTypeface);
+        textBanner2.setTypeface(myTypeface);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -95,9 +102,9 @@ public class StartActivity extends Activity implements View.OnClickListener{
         String bank = mEdtBank.getText().toString();
         String credit = mEdtCreditCard.getText().toString();
         if (!cash.isEmpty() && !bank.isEmpty() && ! credit.isEmpty()) {
-            int cashBalance = Integer.valueOf(cash);
-            int bankBalance = Integer.valueOf(bank);
-            int creditBalance = Integer.valueOf(credit);
+            double cashBalance = Double.valueOf(cash);
+            double bankBalance = Double.valueOf(bank);
+            double creditBalance = Double.valueOf(credit);
             int min = 1000;
             if (currency.equals("VND")) {
                 if (cashBalance / min < 1 || bankBalance / min < 1 || creditBalance / min < 1) {
