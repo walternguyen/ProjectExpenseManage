@@ -36,11 +36,17 @@ public class PreferencesUtils {
     }
 
     public static String getString(String key, String defValue) {
-        return mPreferenceInstance.getString(key, defValue);
+        if (mPreferenceInstance != null) {
+            return mPreferenceInstance.getString(key, defValue);
+        }
+        return "";
     }
 
     public static boolean getBoolean(String key, boolean defValue) {
-        return mPreferenceInstance.getBoolean(key, defValue);
+        if (mPreferenceInstance != null) {
+            return mPreferenceInstance.getBoolean(key, defValue);
+        }
+        return false;
     }
 
     public static boolean isInitialized() {

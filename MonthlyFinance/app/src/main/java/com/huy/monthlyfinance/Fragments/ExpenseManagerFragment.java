@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,7 +21,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CalendarView;
@@ -64,6 +64,7 @@ import com.huy.monthlyfinance.MyView.Item.ListItem.ExpensesItem;
 import com.huy.monthlyfinance.MyView.Item.ListItem.ProductDropdownItem;
 import com.huy.monthlyfinance.MyView.Item.ListItem.ProductImageItem;
 import com.huy.monthlyfinance.MyView.Item.ListItem.RadialItem;
+import com.huy.monthlyfinance.ProductGroupActivity;
 import com.huy.monthlyfinance.R;
 import com.huy.monthlyfinance.SupportUtils.NameValuePair;
 import com.huy.monthlyfinance.SupportUtils.PreferencesUtils;
@@ -74,8 +75,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.app.Activity.RESULT_OK;
+import java.util.Random;
 
 /**
  * Created by Phuong on 26/08/2016.
@@ -267,6 +267,8 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
             mTextAccount.setText(mSelectedAccount.getAccountName());
         }
         mTextAccount.setOnClickListener(this);
+
+        view.findViewById(R.id.buttonAddGroup).setOnClickListener(this);
         view.findViewById(R.id.buttonSelectAccount).setOnClickListener(this);
         view.findViewById(R.id.buttonCloseAccount).setOnClickListener(this);
         view.findViewById(R.id.itemSelectCash).setOnClickListener(this);
@@ -597,11 +599,20 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
                 if (mMonthExpense == null) {
                     mMonthExpense = new ArrayList<>();
                 }
-                if (mExpenses == null) {
-                    mExpenses = new String[]{resources.getString(R.string.bill), resources.getString(R.string.health),
-                            resources.getString(R.string.entertainment), resources.getString(R.string.food),
-                            resources.getString(R.string.dress), resources.getString(R.string.transport),
-                            resources.getString(R.string.home), resources.getString(R.string.family), resources.getString(R.string.etc)};
+                if (mExpenseImages == null || mExpenseBitmap == null || mExpenses == null) {
+                    ArrayList<ProductGroup> productGroups = MainApplication.getInstance().getProductGroups();
+
+                    mExpenseImages = new int[productGroups.size()];
+                    mExpenseBitmap = new Bitmap[productGroups.size()];
+                    mExpenses = new String[productGroups.size()];
+                    String country = SupportUtils.getCountryCode().toLowerCase();
+                    for (int i = 0; i < mExpenseImages.length; i++) {
+                        ProductGroup group = productGroups.get(i);
+                        int resId = resources.getIdentifier(productGroups.get(i).getGroupImage(), "drawable", activity.getPackageName());
+                        mExpenseImages[i] = resId;
+                        mExpenseBitmap[i] = BitmapFactory.decodeResource(resources, resId);
+                        mExpenses[i] = country.equals("us") ? group.getGroupNameEN() : group.getGroupNameVI();
+                    }
                 }
                 Collections.addAll(mMonthExpense, mExpenses);
                 if (mPieChartColors == null) {
@@ -613,16 +624,6 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
 
                 if (mListExpenses == null) {
                     mListExpenses = new ArrayList<>();
-                }
-                if (mExpenseImages == null || mExpenseBitmap == null) {
-                    mExpenseImages = new int[]{R.mipmap.ic_bill_white_18dp, R.mipmap.ic_health_care_white_18dp, R.mipmap.ic_entertainment_white_18dp,
-                            R.mipmap.ic_food_18dp, R.mipmap.ic_dressing_white_18dp, R.mipmap.ic_transport_white_18dp,
-                            R.mipmap.ic_home_white_18dp, R.mipmap.ic_family_white_18dp, R.mipmap.ic_more_horiz_white_18dp};
-
-                    mExpenseBitmap = new Bitmap[mExpenseImages.length];
-                    for (int i = 0; i < mExpenseImages.length; i++) {
-                        mExpenseBitmap[i] = BitmapFactory.decodeResource(resources, mExpenseImages[i]);
-                    }
                 }
 
                 if (mExpenseDrawables == null) {
@@ -667,7 +668,7 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
 
                 changeCurrentGroup();
                 if (mListExpenses.isEmpty()) {
-                    writeExpenseDetailsData(mListExpenses, mExpenses, mExpenseDrawables, mExpenseImages, mExpenseProgressDrawables);
+                    writeExpenseDetailsData(mListExpenses, mExpenses, mExpenseImages, mExpenseProgressDrawables);
                 }
 
                 mRadialAdapter = new BasicAdapter<>(mListExpenses, R.layout.item_expense, inflater);
@@ -819,11 +820,10 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
     }
 
     private void writeExpenseDetailsData(ArrayList<ExpensesItem> listExpenses, String[] expenses,
-                                         int[] drawables, int[] images, int[] progressDrawables) {
+                                         int[] images, int[] progressDrawables) {
         Resources resources = MainApplication.getInstance().getResources();
         String mostSale = resources.getString(R.string.most_sale);
-        if (drawables.length != images.length || drawables.length != expenses.length
-                || mMapExpenseDetails == null || mMapExpenses == null) {
+        if (images.length != expenses.length || mMapExpenseDetails == null || mMapExpenses == null) {
             return;
         }
 
@@ -872,8 +872,18 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
             String maxTitle = currency.toLowerCase().contains("vnd") ? (textMax + " vnđ") : ("$ " + textMax);
 
             listExpenses.add(new ExpensesItem(getActivity(), mapExpenseTitle.get(key.getKey()), maxTitle, title, (int) max, (int) current,
-                    images[index], drawables[index], progressDrawables[index]));
+                    images[index], mExpenseDrawables[randomCircle()], mExpenseProgressDrawables[randomProgress()]));
         }
+    }
+
+    private int randomCircle() {
+        Random random = new Random();
+        return random.nextInt(mExpenseDrawables.length - 1);
+    }
+
+    private int randomProgress() {
+        Random random = new Random();
+        return random.nextInt(mExpenseProgressDrawables.length - 1);
     }
 
     private void addDataToChart(final ArrayList<String> xValues, final float[] yValuesData, PieChart chart,
@@ -1268,6 +1278,10 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
                 mIconSelectCredit.setVisibility(View.VISIBLE);
                 mIconSelectBank.setVisibility(View.GONE);
                 break;
+            case R.id.buttonAddGroup:
+                Intent intent = new Intent(activity, ProductGroupActivity.class);
+                startActivity(intent);
+                break;
             default:
                 break;
         }
@@ -1316,10 +1330,6 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
         return null;
     }
 
-    private void updateBoughtProducts(ProductDropdownItem item) {
-
-    }
-
     @Override
     public void refreshData() {
         Resources resources = MainApplication.getInstance().getResources();
@@ -1355,7 +1365,7 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
                 mListExpensesDetail.setAdapter(mRadialAdapter);
             }
             mListExpenses.clear();
-            writeExpenseDetailsData(mListExpenses, mExpenses, mExpenseDrawables, mExpenseImages, mExpenseProgressDrawables);
+            writeExpenseDetailsData(mListExpenses, mExpenses, mExpenseImages, mExpenseProgressDrawables);
             mRadialAdapter.notifyDataSetChanged();
         }
     }
