@@ -234,7 +234,7 @@ public class OverViewFragment extends BaseFragment implements View.OnClickListen
         mListAccountItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mAccountItems.get(position).setFocused(!mAccountItems.get(position).isFocused());
+                //mAccountItems.get(position).setFocused(!mAccountItems.get(position).isFocused());
                 mAccountAdapter.notifyDataSetChanged();
                 SupportUtils.setListViewHeight(mListAccountItems);
             }
