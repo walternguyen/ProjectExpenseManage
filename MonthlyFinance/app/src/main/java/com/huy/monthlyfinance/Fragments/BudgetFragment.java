@@ -929,10 +929,11 @@ public class BudgetFragment extends BaseFragment implements View.OnClickListener
         if (mTextCurrentBank != null && mTextInitBank != null &&
                 mTextCurrentCash != null && mTextInitCash != null &&
                 mTextCurrentCredit != null && mTextInitCredit != null) {
+            String initial = context.getResources().getString(R.string.init_balance);
             for (Account account : mListAccounts) {
                 if (account.getAccountName().contains(SupportUtils.getStringLocalized(context, "en", R.string.cash))) {
                     String currentCash = SupportUtils.getNormalDoubleString(account.getCurrentBalance(), "#0,000");
-                    String initCash = SupportUtils.getNormalDoubleString(account.getInitialBalance(), "#0,000");
+                    String initCash = initial + ": " + SupportUtils.getNormalDoubleString(account.getInitialBalance(), "#0,000");
                     if (currency.contains("VND")) {
                         mTextCurrentCash.setText(currentCash + " VNĐ");
                         mTextInitCash.setText(initCash + " VNĐ");
@@ -942,7 +943,7 @@ public class BudgetFragment extends BaseFragment implements View.OnClickListener
                     }
                 } else if (account.getAccountName().contains(SupportUtils.getStringLocalized(context, "en", R.string.credit_card))) {
                     String currentCredit = SupportUtils.getNormalDoubleString(account.getCurrentBalance(), "#0,000");
-                    String initCredit = SupportUtils.getNormalDoubleString(account.getInitialBalance(), "#0,000");
+                    String initCredit = initial + ": " + SupportUtils.getNormalDoubleString(account.getInitialBalance(), "#0,000");
                     if (currency.contains("VND")) {
                         mTextCurrentCredit.setText(currentCredit + " VNĐ");
                         mTextInitCredit.setText(initCredit + " VNĐ");
@@ -952,7 +953,7 @@ public class BudgetFragment extends BaseFragment implements View.OnClickListener
                     }
                 } else {
                     String currentBank = SupportUtils.getNormalDoubleString(account.getCurrentBalance(), "#0,000");
-                    String initBank = SupportUtils.getNormalDoubleString(account.getInitialBalance(), "#0,000");
+                    String initBank = initial + ": " + SupportUtils.getNormalDoubleString(account.getInitialBalance(), "#0,000");
                     if (currency.contains("VND")) {
                         mTextCurrentBank.setText(currentBank + " VNĐ");
                         mTextInitBank.setText(initBank + " VNĐ");
