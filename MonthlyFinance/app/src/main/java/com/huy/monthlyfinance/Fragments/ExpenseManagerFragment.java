@@ -606,11 +606,12 @@ public class ExpenseManagerFragment extends BaseFragment implements View.OnClick
                     mExpenseBitmap = new Bitmap[productGroups.size()];
                     mExpenses = new String[productGroups.size()];
                     String country = SupportUtils.getCountryCode().toLowerCase();
+                    float size = SupportUtils.dip2Pixel(activity, 20);
                     for (int i = 0; i < mExpenseImages.length; i++) {
                         ProductGroup group = productGroups.get(i);
                         int resId = resources.getIdentifier(productGroups.get(i).getGroupImage(), "drawable", activity.getPackageName());
                         mExpenseImages[i] = resId;
-                        mExpenseBitmap[i] = BitmapFactory.decodeResource(resources, resId);
+                        mExpenseBitmap[i] = SupportUtils.decodeSampledBitmapFromResource(resources, resId, (int) size, (int) size);
                         mExpenses[i] = country.equals("us") ? group.getGroupNameEN() : group.getGroupNameVI();
                     }
                 }

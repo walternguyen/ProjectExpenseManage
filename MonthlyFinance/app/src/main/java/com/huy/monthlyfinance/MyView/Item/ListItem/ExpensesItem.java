@@ -1,13 +1,16 @@
 package com.huy.monthlyfinance.MyView.Item.ListItem;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.huy.monthlyfinance.MainApplication;
 import com.huy.monthlyfinance.R;
+import com.huy.monthlyfinance.SupportUtils.SupportUtils;
 
 /**
  * Created by Phuong on 03/09/2016.
@@ -68,8 +71,14 @@ public class ExpensesItem extends BaseItem {
     @Override
     public void setView(View view) {
         ImageButton icon = (ImageButton) view.findViewById(R.id.buttonIcon);
-        icon.setImageResource(mImage);
-        icon.setBackgroundResource(mDrawable);
+        Context context = MainApplication.getInstance().getApplicationContext();
+        float size = SupportUtils.dip2Pixel(context, 30);
+        Bitmap bitmap = SupportUtils.decodeSampledBitmapFromResource(context.getResources(), mImage, (int) size, (int) size);
+        icon.setImageBitmap(bitmap);
+        String text1 = mText1.toLowerCase();
+        if (text1.contains("etc") || text1.contains("khác")) {
+            icon.setBackgroundResource(mDrawable);
+        }
         TextView field1 = (TextView) view.findViewById(R.id.textField1);
         field1.setText(mText1);
         TextView field2 = (TextView) view.findViewById(R.id.textField2);

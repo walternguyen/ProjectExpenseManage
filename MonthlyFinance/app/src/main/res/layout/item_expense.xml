@@ -14,7 +14,7 @@
             android:id="@+id/buttonIcon"
             android:layout_width="36dip"
             android:layout_height="36dip"
-            android:background="@drawable/circle_dark_blue"
+            android:background="#0000"
             android:src="@mipmap/ic_food_18dp"
             android:scaleType="center"
             android:padding="3dip"/>
